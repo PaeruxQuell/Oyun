@@ -1494,7 +1494,12 @@ function resetGame() {
 }
 
 nextBtn.addEventListener('click', () => { current++; showPreQuestion(); });
-restartBtn.addEventListener('click', resetGame);
+restartBtn.addEventListener('click', () => {
+  playClickSound();
+  currentSeed = Math.floor(Math.random() * 1e9);
+  pendingSeed = null;
+  resetGame();
+});
 
 topRestartBtn.addEventListener('click', () => {
   const confirmed = confirm('Farklı sorularla yeniden başlamak istiyor musun? Mevcut ilerlemen kaybolacak.');
