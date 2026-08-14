@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mayın Tarlası</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #008080; /* classic Windows 95 teal desktop */
+    font-family: 'Tahoma', 'MS Sans Serif', Geneva, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 12px 60px;
+  }
+
+  .back-link {
+    color: #fff; text-decoration: none; font-size: 12px; margin-bottom: 14px;
+    background: #c0c0c0; color: #000; padding: 4px 12px;
+    border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #7b7b7b; border-bottom: 2px solid #7b7b7b;
+  }
+  .back-link:active { border-top: 2px solid #7b7b7b; border-left: 2px solid #7b7b7b; border-right: 2px solid #fff; border-bottom: 2px solid #fff; }
+
+  /* ---------- WINDOW CHROME ---------- */
+  .window {
+    background: #c0c0c0;
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #000; border-bottom: 2px solid #000;
+    box-shadow: 1px 1px 0 1px #7b7b7b inset;
+    padding: 3px;
+    max-width: 96vw;
+  }
+
+  .titlebar {
+    background: linear-gradient(90deg, #000082, #1084d0);
+    color: #fff;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 3px 4px 3px 6px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 3px;
+    user-select: none;
+  }
+  .titlebar-text { display: flex; align-items: center; gap: 6px; }
+  .titlebar-buttons { display: flex; gap: 2px; }
+  .tb-btn {
+    width: 18px; height: 16px;
+    background: #c0c0c0;
+    border-top: 1px solid #fff; border-left: 1px solid #fff;
+    border-right: 1px solid #000; border-bottom: 1px solid #000;
+    color: #000; font-size: 11px; font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; text-decoration: none; line-height: 1;
+    font-family: 'Tahoma', sans-serif;
+  }
+  .tb-btn:active { border-top: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #fff; border-bottom: 1px solid #fff; }
+
+  .menubar {
+    display: flex; gap: 2px; padding: 2px 4px; margin-bottom: 3px; position: relative;
+    font-size: 12.5px;
+  }
+  .menu-item { position: relative; padding: 2px 8px; cursor: pointer; user-select: none; }
+  .menu-item:hover, .menu-item.open { background: #000082; color: #fff; }
+  .menu-dropdown {
+    position: absolute; top: 100%; left: 0; z-index: 50;
+    background: #c0c0c0;
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #000; border-bottom: 2px solid #000;
+    min-width: 210px;
+    padding: 2px;
+  }
+  .menu-option {
+    padding: 5px 12px; font-size: 12.5px; color: #000; white-space: nowrap; cursor: pointer;
+  }
+  .menu-option:hover { background: #000082; color: #fff; }
+  .menu-divider { height: 1px; background: #7b7b7b; border-bottom: 1px solid #fff; margin: 3px 2px; }
+
+  /* ---------- GAME PANEL ---------- */
+  .game-panel {
+    border-top: 2px solid #7b7b7b; border-left: 2px solid #7b7b7b;
+    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    padding: 6px;
+  }
+
+  .hud {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 2px solid #7b7b7b; border-left: 2px solid #7b7b7b;
+    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    padding: 4px 6px; margin-bottom: 6px;
+  }
+
+  .lcd {
+    background: #000;
+    color: #ff0000;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 26px;
+    letter-spacing: 3px;
+    padding: 2px 6px;
+    border-top: 2px solid #7b7b7b; border-left: 2px solid #7b7b7b;
+    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    text-shadow: 0 0 6px rgba(255,0,0,0.6);
+    min-width: 62px;
+    text-align: center;
+  }
+
+  .face-btn {
+    width: 36px; height: 36px;
+    background: #c0c0c0;
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #000; border-bottom: 2px solid #000;
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    padding: 0;
+  }
+  .face-btn:active, .face-btn.pressed {
+    border-top: 2px solid #000; border-left: 2px solid #000;
+    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+  }
+
+  /* ---------- BOARD ---------- */
+  .board-wrap { overflow-x: auto; max-width: 100%; }
+
+  .board {
+    display: grid;
+    border-top: 3px solid #7b7b7b; border-left: 3px solid #7b7b7b;
+    border-right: 3px solid #fff; border-bottom: 3px solid #fff;
+    width: fit-content;
+  }
+
+  .cell {
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: bold;
+    font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
+    user-select: none;
+    cursor: pointer;
+    background: #c0c0c0;
+  }
+  @media (max-width: 480px) {
+    .cell { width: 20px; height: 20px; font-size: 12px; }
+  }
+
+  .cell.covered {
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #7b7b7b; border-bottom: 2px solid #7b7b7b;
+  }
+  .cell.covered:active { border-top: 1px solid #7b7b7b; border-left: 1px solid #7b7b7b; }
+
+  .cell.revealed {
+    border: 1px solid #7b7b7b;
+    background: #c0c0c0;
+    cursor: default;
+  }
+  .cell.mine-exploded { background: #ff0000; }
+
+  .cell.n1 { color: #0000ff; }
+  .cell.n2 { color: #008200; }
+  .cell.n3 { color: #ff0000; }
+  .cell.n4 { color: #000084; }
+  .cell.n5 { color: #840000; }
+  .cell.n6 { color: #008284; }
+  .cell.n7 { color: #000000; }
+  .cell.n8 { color: #757575; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="index.html">← Arcade'e Dön</a>
+
+<div class="window">
+  <div class="titlebar">
+    <div class="titlebar-text">💣 Mayın Tarlası</div>
+    <div class="titlebar-buttons">
+      <button class="tb-btn" title="Simge durumuna küçült">_</button>
+      <button class="tb-btn" title="Ekranı kapla">▢</button>
+      <a class="tb-btn" href="index.html" title="Kapat">✕</a>
+    </div>
+  </div>
+
+  <div class="menubar">
+    <div class="menu-item" id="gameMenuBtn">
+      Oyun
+      <div class="menu-dropdown hidden" id="gameMenu">
+        <div class="menu-option" data-action="new">🔄&nbsp;&nbsp;Yeni Oyun&nbsp;&nbsp;&nbsp;&nbsp;F2</div>
+        <div class="menu-divider"></div>
+        <div class="menu-option" data-diff="beginner">⚪&nbsp;&nbsp;Başlangıç (9×9, 10 mayın)</div>
+        <div class="menu-option" data-diff="intermediate">🟡&nbsp;&nbsp;Orta (16×16, 40 mayın)</div>
+        <div class="menu-option" data-diff="expert">🔴&nbsp;&nbsp;Uzman (30×16, 99 mayın)</div>
+        <div class="menu-divider"></div>
+        <div class="menu-option" data-action="exit-link">🚪&nbsp;&nbsp;Çıkış</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-panel">
+    <div class="hud">
+      <div class="lcd" id="mineCounter">010</div>
+      <button class="face-btn" id="faceBtn">🙂</button>
+      <div class="lcd" id="timerDisplay">000</div>
+    </div>
+    <div class="board-wrap">
+      <div class="board" id="board"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DIFFICULTIES = {
+  beginner: { rows: 9, cols: 9, mines: 10 },
+  intermediate: { rows: 16, cols: 16, mines: 40 },
+  expert: { rows: 16, cols: 30, mines: 99 }
+};
+
+let currentDiff = 'beginner';
+let ROWS, COLS, MINES;
+let board = [];
+let firstClick = true;
+let gameOver = false;
+let gameWon = false;
+let flagsPlaced = 0;
+let revealedCount = 0;
+let secondsElapsed = 0;
+let timerInterval = null;
+
+const boardEl = document.getElementById('board');
+const mineCounterEl = document.getElementById('mineCounter');
+const timerDisplayEl = document.getElementById('timerDisplay');
+const faceBtn = document.getElementById('faceBtn');
+const gameMenuBtn = document.getElementById('gameMenuBtn');
+const gameMenu = document.getElementById('gameMenu');
+
+function formatCounter(n) {
+  const clamped = Math.max(-99, Math.min(999, n));
+  const sign = clamped < 0 ? '-' : '';
+  const abs = Math.abs(clamped);
+  return sign + String(abs).padStart(clamped < 0 ? 2 : 3, '0');
+}
+
+function initGame(diff) {
+  currentDiff = diff;
+  const cfg = DIFFICULTIES[diff];
+  ROWS = cfg.rows; COLS = cfg.cols; MINES = cfg.mines;
+
+  board = Array.from({ length: ROWS }, () =>
+    Array.from({ length: COLS }, () => ({ mine: false, revealed: false, flag: 0, adjacent: 0 }))
+  );
+
+  firstClick = true;
+  gameOver = false;
+  gameWon = false;
+  flagsPlaced = 0;
+  revealedCount = 0;
+  secondsElapsed = 0;
+
+  clearInterval(timerInterval);
+  timerInterval = null;
+  timerDisplayEl.textContent = '000';
+  mineCounterEl.textContent = formatCounter(MINES);
+  faceBtn.textContent = '🙂';
+
+  boardEl.style.gridTemplateColumns = `repeat(${COLS}, 24px)`;
+  boardEl.innerHTML = '';
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell covered';
+      cell.dataset.r = r;
+      cell.dataset.c = c;
+
+      cell.addEventListener('mousedown', (e) => {
+        if (gameOver) return;
+        if (e.button === 0) { faceBtn.textContent = '😮'; }
+      });
+      cell.addEventListener('mouseup', () => {
+        if (!gameOver) faceBtn.textContent = '🙂';
+      });
+      cell.addEventListener('mouseleave', () => {
+        if (!gameOver) faceBtn.textContent = '🙂';
+      });
+
+      cell.addEventListener('click', () => handleLeftClick(r, c));
+      cell.addEventListener('contextmenu', (e) => { e.preventDefault(); handleRightClick(r, c); });
+      cell.addEventListener('auxclick', (e) => { if (e.button === 1) { e.preventDefault(); handleChord(r, c); } });
+      cell.addEventListener('dblclick', () => handleChord(r, c));
+
+      boardEl.appendChild(cell);
+    }
+  }
+  renderBoard();
+}
+
+function inBounds(r, c) { return r >= 0 && r < ROWS && c >= 0 && c < COLS; }
+
+function neighbors(r, c) {
+  const out = [];
+  for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+    if (dr === 0 && dc === 0) continue;
+    const nr = r + dr, nc = c + dc;
+    if (inBounds(nr, nc)) out.push([nr, nc]);
+  }
+  return out;
+}
+
+function placeMines(excludeR, excludeC) {
+  let placed = 0;
+  while (placed < MINES) {
+    const r = Math.floor(Math.random() * ROWS);
+    const c = Math.floor(Math.random() * COLS);
+    if (r === excludeR && c === excludeC) continue;
+    if (board[r][c].mine) continue;
+    board[r][c].mine = true;
+    placed++;
+  }
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (board[r][c].mine) continue;
+      board[r][c].adjacent = neighbors(r, c).filter(([nr, nc]) => board[nr][nc].mine).length;
+    }
+  }
+}
+
+function handleLeftClick(r, c) {
+  if (gameOver) return;
+  const cell = board[r][c];
+  if (cell.flag === 1) return; // can't reveal a flagged cell
+
+  if (firstClick) {
+    placeMines(r, c);
+    firstClick = false;
+    startTimer();
+  }
+
+  if (cell.revealed) {
+    handleChord(r, c);
+    return;
+  }
+
+  revealCell(r, c);
+  renderBoard();
+  checkWin();
+}
+
+function revealCell(r, c) {
+  const cell = board[r][c];
+  if (cell.revealed || cell.flag === 1) return;
+  cell.revealed = true;
+  revealedCount++;
+
+  if (cell.mine) {
+    triggerLoss(r, c);
+    return;
+  }
+
+  if (cell.adjacent === 0) {
+    neighbors(r, c).forEach(([nr, nc]) => revealCell(nr, nc));
+  }
+}
+
+function handleRightClick(r, c) {
+  if (gameOver) return;
+  if (firstClick) return;
+  const cell = board[r][c];
+  if (cell.revealed) return;
+  cell.flag = (cell.flag + 1) % 3; // 0 none -> 1 flag -> 2 question -> 0
+  flagsPlaced += (cell.flag === 1) ? 1 : (cell.flag === 0 ? -1 : 0);
+  mineCounterEl.textContent = formatCounter(MINES - flagsPlaced);
+  renderBoard();
+}
+
+function handleChord(r, c) {
+  if (gameOver) return;
+  const cell = board[r][c];
+  if (!cell.revealed || cell.adjacent === 0) return;
+  const neigh = neighbors(r, c);
+  const flaggedCount = neigh.filter(([nr, nc]) => board[nr][nc].flag === 1).length;
+  if (flaggedCount !== cell.adjacent) return;
+  neigh.forEach(([nr, nc]) => {
+    if (board[nr][nc].flag !== 1) revealCell(nr, nc);
+  });
+  renderBoard();
+  checkWin();
+}
+
+function triggerLoss(explodedR, explodedC) {
+  gameOver = true;
+  gameWon = false;
+  clearInterval(timerInterval);
+  faceBtn.textContent = '😵';
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const cell = board[r][c];
+      if (cell.mine && cell.flag !== 1) cell.revealed = true;
+    }
+  }
+  board[explodedR][explodedC].exploded = true;
+}
+
+function checkWin() {
+  if (gameOver) return;
+  const totalSafe = ROWS * COLS - MINES;
+  if (revealedCount === totalSafe) {
+    gameOver = true;
+    gameWon = true;
+    clearInterval(timerInterval);
+    faceBtn.textContent = '😎';
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      if (board[r][c].mine) board[r][c].flag = 1;
+    }
+    flagsPlaced = MINES;
+    mineCounterEl.textContent = formatCounter(0);
+    renderBoard();
+  }
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    secondsElapsed = Math.min(999, secondsElapsed + 1);
+    timerDisplayEl.textContent = String(secondsElapsed).padStart(3, '0');
+  }, 1000);
+}
+
+function renderBoard() {
+  const cells = boardEl.children;
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const idx = r * COLS + c;
+      const el = cells[idx];
+      const cell = board[r][c];
+
+      el.className = 'cell';
+      el.textContent = '';
+
+      if (cell.revealed) {
+        el.classList.add('revealed');
+        if (cell.mine) {
+          el.textContent = '💣';
+          if (cell.exploded) el.classList.add('mine-exploded');
+        } else if (cell.adjacent > 0) {
+          el.textContent = cell.adjacent;
+          el.classList.add('n' + cell.adjacent);
+        }
+      } else {
+        el.classList.add('covered');
+        if (cell.flag === 1) el.textContent = '🚩';
+        else if (cell.flag === 2) el.textContent = '❓';
+        if (gameOver && !gameWon && cell.flag === 1 && !cell.mine) el.textContent = '❌';
+      }
+    }
+  }
+}
+
+faceBtn.addEventListener('click', () => initGame(currentDiff));
+
+gameMenuBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  gameMenu.classList.toggle('hidden');
+  gameMenuBtn.classList.toggle('open');
+});
+document.addEventListener('click', () => {
+  gameMenu.classList.add('hidden');
+  gameMenuBtn.classList.remove('open');
+});
+
+gameMenu.querySelectorAll('.menu-option').forEach(opt => {
+  opt.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (opt.dataset.action === 'new') initGame(currentDiff);
+    else if (opt.dataset.diff) initGame(opt.dataset.diff);
+    else if (opt.dataset.action === 'exit-link') window.location.href = 'index.html';
+    gameMenu.classList.add('hidden');
+  });
+});
+
+document.addEventListener('contextmenu', (e) => {
+  if (e.target.closest('.board')) e.preventDefault();
+});
+
+initGame('beginner');
+</script>
+</body>
+</html>
