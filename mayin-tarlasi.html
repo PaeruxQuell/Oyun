@@ -4,211 +4,234 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mayın Tarlası</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+  :root{
+    --void: #0a0517; --deep: #170b34; --mid: #2a1454; --panel: #1c0f3f; --panel-2: #26134f;
+    --gold: #f4cc6a; --gold-bright: #ffe29a; --gold-deep: #b9862a;
+    --teal: #3fd8ae; --coral: #ff6f6f; --text: #f6f3ff; --text-dim: #a99bd6;
+    --font-display: 'Cinzel', serif; --font-body: 'Manrope', sans-serif;
+  }
   * { box-sizing: border-box; }
-
   body {
-    margin: 0;
-    min-height: 100vh;
-    background: #008080; /* classic Windows 95 teal desktop */
-    font-family: 'Tahoma', 'MS Sans Serif', Geneva, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px 12px 60px;
+    margin: 0; min-height: 100vh;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -8%, var(--mid) 0%, transparent 60%),
+      radial-gradient(ellipse 700px 500px at 90% 100%, rgba(63,216,174,0.08) 0%, transparent 55%),
+      linear-gradient(180deg, var(--deep) 0%, var(--void) 100%);
+    font-family: var(--font-body); color: var(--text);
+    display: flex; justify-content: center; padding: 24px 14px 60px; overflow-x: hidden; position: relative;
   }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 15% 25%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 75% 15%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 45% 65%, rgba(255,255,255,0.45), transparent),
+      radial-gradient(1.5px 1.5px at 90% 55%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 25% 80%, rgba(255,255,255,0.4), transparent);
+    animation: twinkle 5s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+  .vignette { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse 80% 70% at 50% 30%, transparent 55%, rgba(5,3,15,0.75) 100%); }
 
-  .back-link {
-    color: #fff; text-decoration: none; font-size: 12px; margin-bottom: 14px;
-    background: #c0c0c0; color: #000; padding: 4px 12px;
-    border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #7b7b7b; border-bottom: 2px solid #7b7b7b;
-  }
-  .back-link:active { border-top: 2px solid #7b7b7b; border-left: 2px solid #7b7b7b; border-right: 2px solid #fff; border-bottom: 2px solid #fff; }
+  .stage { width: 100%; max-width: 620px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 
-  /* ---------- WINDOW CHROME ---------- */
-  .window {
-    background: #c0c0c0;
-    border-top: 2px solid #fff; border-left: 2px solid #fff;
-    border-right: 2px solid #000; border-bottom: 2px solid #000;
-    box-shadow: 1px 1px 0 1px #7b7b7b inset;
-    padding: 3px;
-    max-width: 96vw;
-  }
+  .back-link { align-self: flex-start; color: var(--text-dim); text-decoration: none; font-size: 12.5px; font-weight: 700; }
+  .back-link:hover { color: var(--gold-bright); }
 
-  .titlebar {
-    background: linear-gradient(90deg, #000082, #1084d0);
-    color: #fff;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 3px 4px 3px 6px;
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 3px;
-    user-select: none;
+  .title {
+    font-family: var(--font-display); font-weight: 800; letter-spacing: 3px;
+    font-size: clamp(26px, 5vw, 38px); text-align: center;
+    background: linear-gradient(100deg, var(--gold-deep) 0%, var(--gold-bright) 25%, #fffce0 45%, var(--gold-bright) 65%, var(--gold-deep) 100%);
+    background-size: 260% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 0 50px rgba(244,204,106,0.25); margin: 0; animation: shimmerTitle 6s ease-in-out infinite;
   }
-  .titlebar-text { display: flex; align-items: center; gap: 6px; }
-  .titlebar-buttons { display: flex; gap: 2px; }
-  .tb-btn {
-    width: 18px; height: 16px;
-    background: #c0c0c0;
-    border-top: 1px solid #fff; border-left: 1px solid #fff;
-    border-right: 1px solid #000; border-bottom: 1px solid #000;
-    color: #000; font-size: 11px; font-weight: bold;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; text-decoration: none; line-height: 1;
-    font-family: 'Tahoma', sans-serif;
-  }
-  .tb-btn:active { border-top: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #fff; border-bottom: 1px solid #fff; }
+  @keyframes shimmerTitle { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  .subtitle { color: var(--text-dim); font-size: 12px; letter-spacing: 3px; text-transform: uppercase; margin-top: -10px; font-weight: 600; }
 
-  .menubar {
-    display: flex; gap: 2px; padding: 2px 4px; margin-bottom: 3px; position: relative;
-    font-size: 12.5px;
-  }
-  .menu-item { position: relative; padding: 2px 8px; cursor: pointer; user-select: none; }
-  .menu-item:hover, .menu-item.open { background: #000082; color: #fff; }
-  .menu-dropdown {
-    position: absolute; top: 100%; left: 0; z-index: 50;
-    background: #c0c0c0;
-    border-top: 2px solid #fff; border-left: 2px solid #fff;
-    border-right: 2px solid #000; border-bottom: 2px solid #000;
-    min-width: 210px;
-    padding: 2px;
-  }
-  .menu-option {
-    padding: 5px 12px; font-size: 12.5px; color: #000; white-space: nowrap; cursor: pointer;
-  }
-  .menu-option:hover { background: #000082; color: #fff; }
-  .menu-divider { height: 1px; background: #7b7b7b; border-bottom: 1px solid #fff; margin: 3px 2px; }
+  @keyframes revealPop { 0% { opacity:0; transform: scale(0.85) translateY(24px);} 60%{opacity:1; transform: scale(1.02) translateY(-4px);} 100%{opacity:1; transform: scale(1) translateY(0);} }
 
-  /* ---------- GAME PANEL ---------- */
-  .game-panel {
-    border-top: 2px solid #7b7b7b; border-left: 2px solid #7b7b7b;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-    padding: 6px;
-  }
+  /* ---------- CORNER FLOURISH ---------- */
+  .corner-flourish { position: absolute; width: 20px; height: 20px; pointer-events: none; opacity: 0.7; }
+  .corner-flourish.tl { top: 10px; left: 10px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); border-radius: 6px 0 0 0; }
+  .corner-flourish.tr { top: 10px; right: 10px; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); border-radius: 0 6px 0 0; }
+  .corner-flourish.bl { bottom: 10px; left: 10px; border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold); border-radius: 0 0 0 6px; }
+  .corner-flourish.br { bottom: 10px; right: 10px; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); border-radius: 0 0 6px 0; }
 
-  .hud {
-    display: flex; align-items: center; justify-content: space-between;
-    border-top: 2px solid #7b7b7b; border-left: 2px solid #7b7b7b;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-    padding: 4px 6px; margin-bottom: 6px;
+  /* ---------- DIFFICULTY SCREEN ---------- */
+  .diff-card {
+    position: relative; width: 100%;
+    background: linear-gradient(180deg, rgba(38,19,79,0.75), rgba(28,15,63,0.75));
+    backdrop-filter: blur(16px); border: 1.5px solid rgba(244,204,106,0.3);
+    border-radius: 20px; padding: 32px 26px; text-align: center;
+    box-shadow: 0 0 0 1px rgba(244,204,106,0.08), 0 30px 70px rgba(0,0,0,0.5);
+    animation: revealPop 0.5s cubic-bezier(.22,1,.36,1) both;
   }
+  .diff-card p { color: var(--text-dim); font-size: 14px; line-height: 1.6; margin: 8px 0 24px; }
+  .diff-grid { display: flex; flex-direction: column; gap: 12px; }
+  .diff-btn {
+    background: linear-gradient(180deg, rgba(42,26,85,0.9), rgba(23,11,52,0.9));
+    border: 1.5px solid var(--gold-deep); border-radius: 14px; padding: 16px 18px; cursor: pointer;
+    color: var(--gold-bright); font-family: var(--font-display); font-weight: 700; font-size: 15px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    display: flex; align-items: center; gap: 14px; text-align: left;
+  }
+  .diff-btn .diff-icon { font-size: 24px; }
+  .diff-btn .diff-info { display: flex; flex-direction: column; gap: 2px; }
+  .diff-btn .diff-clues { font-family: var(--font-body); font-size: 11px; color: var(--text-dim); font-weight: 600; }
+  .diff-btn:hover { transform: translateY(-3px); border-color: var(--gold-bright); box-shadow: 0 10px 24px -8px rgba(244,204,106,0.5); }
+  .diff-btn.hard { border-color: var(--coral); color: #ffb4b4; }
+  .diff-btn.hard:hover { box-shadow: 0 10px 24px -8px rgba(255,111,111,0.5); }
 
-  .lcd {
-    background: #000;
-    color: #ff0000;
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-    font-size: 26px;
-    letter-spacing: 3px;
-    padding: 2px 6px;
-    border-top: 2px solid #7b7b7b; border-left: 2px solid #7b7b7b;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-    text-shadow: 0 0 6px rgba(255,0,0,0.6);
-    min-width: 62px;
-    text-align: center;
+  /* ---------- HUD ---------- */
+  .hud-bar {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(180deg, rgba(38,19,79,0.65), rgba(28,15,63,0.65));
+    backdrop-filter: blur(12px); border: 1.5px solid rgba(244,204,106,0.25);
+    border-radius: 14px; padding: 10px 16px;
   }
+  .hud-item { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 62px; }
+  .hud-label { font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); font-weight: 700; }
+  .hud-value { font-family: var(--font-display); font-size: 20px; color: var(--gold-bright); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .hud-value.timer { color: var(--teal); }
+  .hud-value.mines { color: var(--coral); }
 
   .face-btn {
-    width: 36px; height: 36px;
-    background: #c0c0c0;
-    border-top: 2px solid #fff; border-left: 2px solid #fff;
-    border-right: 2px solid #000; border-bottom: 2px solid #000;
-    font-size: 20px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    padding: 0;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: linear-gradient(180deg, rgba(42,26,85,0.9), rgba(23,11,52,0.9));
+    border: 2px solid var(--gold-deep); font-size: 22px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   }
-  .face-btn:active, .face-btn.pressed {
-    border-top: 2px solid #000; border-left: 2px solid #000;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-  }
+  .face-btn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 20px -6px rgba(244,204,106,0.5); border-color: var(--gold-bright); }
+  .face-btn:active { transform: scale(0.95); }
 
   /* ---------- BOARD ---------- */
-  .board-wrap { overflow-x: auto; max-width: 100%; }
-
-  .board {
-    display: grid;
-    border-top: 3px solid #7b7b7b; border-left: 3px solid #7b7b7b;
-    border-right: 3px solid #fff; border-bottom: 3px solid #fff;
-    width: fit-content;
+  .board-wrap {
+    width: 100%; overflow-x: auto;
+    background: linear-gradient(180deg, rgba(34,17,81,0.85), rgba(21,10,52,0.85));
+    border: 2px solid var(--gold-deep); border-radius: 16px; padding: 12px;
+    box-shadow: 0 0 0 1px rgba(244,204,106,0.1), 0 0 50px -10px rgba(244,204,106,0.2), 0 20px 45px rgba(0,0,0,0.5);
   }
+  .board { display: grid; gap: 3px; width: fit-content; margin: 0 auto; }
 
   .cell {
-    width: 24px; height: 24px;
+    width: 28px; height: 28px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: bold;
-    font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
-    user-select: none;
-    cursor: pointer;
-    background: #c0c0c0;
+    font-family: var(--font-display); font-weight: 800; font-size: 13px;
+    border-radius: 6px; user-select: none; cursor: pointer; position: relative;
   }
-  @media (max-width: 480px) {
-    .cell { width: 20px; height: 20px; font-size: 12px; }
-  }
+  @media (max-width: 480px) { .cell { width: 24px; height: 24px; font-size: 11px; } }
 
   .cell.covered {
-    border-top: 2px solid #fff; border-left: 2px solid #fff;
-    border-right: 2px solid #7b7b7b; border-bottom: 2px solid #7b7b7b;
+    background: linear-gradient(180deg, #2a1a55, #180d3a);
+    border: 1.5px solid var(--gold-deep);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    transition: transform 0.08s ease, border-color 0.15s ease;
   }
-  .cell.covered:active { border-top: 1px solid #7b7b7b; border-left: 1px solid #7b7b7b; }
+  .cell.covered:hover { border-color: var(--gold-bright); transform: translateY(-1px); }
+  .cell.covered:active { transform: scale(0.94); }
 
   .cell.revealed {
-    border: 1px solid #7b7b7b;
-    background: #c0c0c0;
+    background: rgba(10,5,23,0.55);
+    border: 1px solid rgba(169,155,214,0.15);
     cursor: default;
   }
-  .cell.mine-exploded { background: #ff0000; }
+  .cell.mine-exploded { background: rgba(255,111,111,0.35); border-color: var(--coral); }
 
-  .cell.n1 { color: #0000ff; }
-  .cell.n2 { color: #008200; }
-  .cell.n3 { color: #ff0000; }
-  .cell.n4 { color: #000084; }
-  .cell.n5 { color: #840000; }
-  .cell.n6 { color: #008284; }
-  .cell.n7 { color: #000000; }
-  .cell.n8 { color: #757575; }
+  .cell.n1 { color: #6aa6ff; }
+  .cell.n2 { color: #4ee08a; }
+  .cell.n3 { color: #ff8080; }
+  .cell.n4 { color: #b18bff; }
+  .cell.n5 { color: #ffb454; }
+  .cell.n6 { color: #4fd8d8; }
+  .cell.n7 { color: #f4f0ff; }
+  .cell.n8 { color: #9a94b8; }
+
+  .controls-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .ctrl-btn {
+    background: transparent; border: 1.5px solid var(--gold-deep); color: var(--gold-bright);
+    border-radius: 24px; padding: 10px 20px; font-weight: 700; font-size: 12.5px; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.15s ease;
+  }
+  .ctrl-btn:hover { background: rgba(244,204,106,0.1); border-color: var(--gold-bright); transform: translateY(-2px); }
+
+  /* ---------- WIN / LOSE OVERLAY ---------- */
+  .end-overlay {
+    position: fixed; inset: 0; background: rgba(5,3,15,0.85); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; z-index: 700; animation: fadeIn 0.4s ease both;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .end-card {
+    background: linear-gradient(180deg, rgba(38,19,79,0.95), rgba(23,11,52,0.97));
+    border: 2px solid var(--gold-deep); border-radius: 22px; padding: 40px 34px;
+    text-align: center; max-width: 400px; width: 90%;
+    box-shadow: 0 0 60px -10px rgba(244,204,106,0.4), 0 30px 70px rgba(0,0,0,0.6);
+    animation: revealPop 0.5s cubic-bezier(.22,1,.36,1) both;
+  }
+  .end-card.lose { border-color: var(--coral); }
+  .end-icon { font-size: 52px; margin-bottom: 8px; }
+  .end-title { font-family: var(--font-display); font-size: 26px; color: var(--gold-bright); font-weight: 800; margin-bottom: 8px; }
+  .end-card.lose .end-title { color: var(--coral); }
+  .end-stats { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; line-height: 1.7; }
+  .end-stats b { color: var(--teal); font-family: var(--font-display); }
+
+  .confetti-piece { position: fixed; top: -20px; z-index: 800; pointer-events: none; border-radius: 2px; animation: confettiFall linear forwards; }
+  @keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(105vh) rotate(720deg); opacity: 0.9; } }
 
   .hidden { display: none !important; }
 </style>
 </head>
 <body>
+<div class="vignette"></div>
 
-<a class="back-link" href="index.html">← Arcade'e Dön</a>
+<div class="stage">
+  <a class="back-link" href="index.html">← Arcade'e Dön</a>
+  <div class="subtitle">KLASİK MAYIN AVI</div>
+  <div class="title">Mayın Tarlası</div>
 
-<div class="window">
-  <div class="titlebar">
-    <div class="titlebar-text">💣 Mayın Tarlası</div>
-    <div class="titlebar-buttons">
-      <button class="tb-btn" title="Simge durumuna küçült">_</button>
-      <button class="tb-btn" title="Ekranı kapla">▢</button>
-      <a class="tb-btn" href="index.html" title="Kapat">✕</a>
+  <!-- DIFFICULTY SCREEN -->
+  <div class="diff-card" id="diffCard">
+    <div class="corner-flourish tl"></div>
+    <div class="corner-flourish tr"></div>
+    <div class="corner-flourish bl"></div>
+    <div class="corner-flourish br"></div>
+    <p>Bir zorluk seviyesi seç. Mayınlar her oyunda yeniden rastgele yerleştirilir.</p>
+    <div class="diff-grid">
+      <button class="diff-btn" data-diff="beginner"><span class="diff-icon">⚪</span><span class="diff-info">Başlangıç<span class="diff-clues">9×9 ızgara, 10 mayın</span></span></button>
+      <button class="diff-btn" data-diff="intermediate"><span class="diff-icon">🟡</span><span class="diff-info">Orta<span class="diff-clues">16×16 ızgara, 40 mayın</span></span></button>
+      <button class="diff-btn hard" data-diff="expert"><span class="diff-icon">🔴</span><span class="diff-info">Uzman<span class="diff-clues">30×16 ızgara, 99 mayın</span></span></button>
     </div>
   </div>
 
-  <div class="menubar">
-    <div class="menu-item" id="gameMenuBtn">
-      Oyun
-      <div class="menu-dropdown hidden" id="gameMenu">
-        <div class="menu-option" data-action="new">🔄&nbsp;&nbsp;Yeni Oyun&nbsp;&nbsp;&nbsp;&nbsp;F2</div>
-        <div class="menu-divider"></div>
-        <div class="menu-option" data-diff="beginner">⚪&nbsp;&nbsp;Başlangıç (9×9, 10 mayın)</div>
-        <div class="menu-option" data-diff="intermediate">🟡&nbsp;&nbsp;Orta (16×16, 40 mayın)</div>
-        <div class="menu-option" data-diff="expert">🔴&nbsp;&nbsp;Uzman (30×16, 99 mayın)</div>
-        <div class="menu-divider"></div>
-        <div class="menu-option" data-action="exit-link">🚪&nbsp;&nbsp;Çıkış</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="game-panel">
-    <div class="hud">
-      <div class="lcd" id="mineCounter">010</div>
+  <!-- GAME SCREEN -->
+  <div class="game-wrap hidden" id="gameWrap" style="width:100%; display:flex; flex-direction:column; align-items:center; gap:16px;">
+    <div class="hud-bar">
+      <div class="hud-item"><span class="hud-label">Mayın</span><span class="hud-value mines" id="mineCounter">010</span></div>
       <button class="face-btn" id="faceBtn">🙂</button>
-      <div class="lcd" id="timerDisplay">000</div>
+      <div class="hud-item"><span class="hud-label">Süre</span><span class="hud-value timer" id="timerDisplay">000</span></div>
     </div>
+
     <div class="board-wrap">
       <div class="board" id="board"></div>
     </div>
+
+    <div class="controls-row">
+      <button class="ctrl-btn" id="newGameBtn">🔄 Yeni Oyun</button>
+      <button class="ctrl-btn" id="changeDiffBtn">⚙️ Zorluk Değiştir</button>
+    </div>
+  </div>
+</div>
+
+<div class="end-overlay hidden" id="endOverlay">
+  <div class="end-card" id="endCard">
+    <div class="end-icon" id="endIcon">🏆</div>
+    <div class="end-title" id="endTitle">Tebrikler!</div>
+    <div class="end-stats" id="endStats"></div>
+    <button class="ctrl-btn" id="endNewGameBtn" style="border-color: var(--gold-bright); padding: 12px 28px;">🔄 Yeni Oyun</button>
   </div>
 </div>
 
@@ -230,12 +253,20 @@ let revealedCount = 0;
 let secondsElapsed = 0;
 let timerInterval = null;
 
+const diffCard = document.getElementById('diffCard');
+const gameWrap = document.getElementById('gameWrap');
 const boardEl = document.getElementById('board');
 const mineCounterEl = document.getElementById('mineCounter');
 const timerDisplayEl = document.getElementById('timerDisplay');
 const faceBtn = document.getElementById('faceBtn');
-const gameMenuBtn = document.getElementById('gameMenuBtn');
-const gameMenu = document.getElementById('gameMenu');
+const newGameBtn = document.getElementById('newGameBtn');
+const changeDiffBtn = document.getElementById('changeDiffBtn');
+const endOverlay = document.getElementById('endOverlay');
+const endCard = document.getElementById('endCard');
+const endIcon = document.getElementById('endIcon');
+const endTitle = document.getElementById('endTitle');
+const endStats = document.getElementById('endStats');
+const endNewGameBtn = document.getElementById('endNewGameBtn');
 
 function formatCounter(n) {
   const clamped = Math.max(-99, Math.min(999, n));
@@ -244,13 +275,21 @@ function formatCounter(n) {
   return sign + String(abs).padStart(clamped < 0 ? 2 : 3, '0');
 }
 
+document.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentDiff = btn.dataset.diff;
+    diffCard.classList.add('hidden');
+    gameWrap.classList.remove('hidden');
+    initGame(currentDiff);
+  });
+});
+
 function initGame(diff) {
-  currentDiff = diff;
   const cfg = DIFFICULTIES[diff];
   ROWS = cfg.rows; COLS = cfg.cols; MINES = cfg.mines;
 
   board = Array.from({ length: ROWS }, () =>
-    Array.from({ length: COLS }, () => ({ mine: false, revealed: false, flag: 0, adjacent: 0 }))
+    Array.from({ length: COLS }, () => ({ mine: false, revealed: false, flag: false, adjacent: 0 }))
   );
 
   firstClick = true;
@@ -265,33 +304,22 @@ function initGame(diff) {
   timerDisplayEl.textContent = '000';
   mineCounterEl.textContent = formatCounter(MINES);
   faceBtn.textContent = '🙂';
+  endOverlay.classList.add('hidden');
 
-  boardEl.style.gridTemplateColumns = `repeat(${COLS}, 24px)`;
+  boardEl.style.gridTemplateColumns = `repeat(${COLS}, 28px)`;
   boardEl.innerHTML = '';
 
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
       const cell = document.createElement('div');
       cell.className = 'cell covered';
-      cell.dataset.r = r;
-      cell.dataset.c = c;
-
-      cell.addEventListener('mousedown', (e) => {
-        if (gameOver) return;
-        if (e.button === 0) { faceBtn.textContent = '😮'; }
-      });
-      cell.addEventListener('mouseup', () => {
-        if (!gameOver) faceBtn.textContent = '🙂';
-      });
-      cell.addEventListener('mouseleave', () => {
-        if (!gameOver) faceBtn.textContent = '🙂';
-      });
-
+      cell.addEventListener('mousedown', (e) => { if (!gameOver && e.button === 0) faceBtn.textContent = '😮'; });
+      cell.addEventListener('mouseup', () => { if (!gameOver) faceBtn.textContent = '🙂'; });
+      cell.addEventListener('mouseleave', () => { if (!gameOver) faceBtn.textContent = '🙂'; });
       cell.addEventListener('click', () => handleLeftClick(r, c));
       cell.addEventListener('contextmenu', (e) => { e.preventDefault(); handleRightClick(r, c); });
       cell.addEventListener('auxclick', (e) => { if (e.button === 1) { e.preventDefault(); handleChord(r, c); } });
       cell.addEventListener('dblclick', () => handleChord(r, c));
-
       boardEl.appendChild(cell);
     }
   }
@@ -320,29 +348,19 @@ function placeMines(excludeR, excludeC) {
     board[r][c].mine = true;
     placed++;
   }
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      if (board[r][c].mine) continue;
-      board[r][c].adjacent = neighbors(r, c).filter(([nr, nc]) => board[nr][nc].mine).length;
-    }
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    if (board[r][c].mine) continue;
+    board[r][c].adjacent = neighbors(r, c).filter(([nr, nc]) => board[nr][nc].mine).length;
   }
 }
 
 function handleLeftClick(r, c) {
   if (gameOver) return;
   const cell = board[r][c];
-  if (cell.flag === 1) return; // can't reveal a flagged cell
+  if (cell.flag) return;
 
-  if (firstClick) {
-    placeMines(r, c);
-    firstClick = false;
-    startTimer();
-  }
-
-  if (cell.revealed) {
-    handleChord(r, c);
-    return;
-  }
+  if (firstClick) { placeMines(r, c); firstClick = false; startTimer(); }
+  if (cell.revealed) { handleChord(r, c); return; }
 
   revealCell(r, c);
   renderBoard();
@@ -351,27 +369,19 @@ function handleLeftClick(r, c) {
 
 function revealCell(r, c) {
   const cell = board[r][c];
-  if (cell.revealed || cell.flag === 1) return;
+  if (cell.revealed || cell.flag) return;
   cell.revealed = true;
   revealedCount++;
-
-  if (cell.mine) {
-    triggerLoss(r, c);
-    return;
-  }
-
-  if (cell.adjacent === 0) {
-    neighbors(r, c).forEach(([nr, nc]) => revealCell(nr, nc));
-  }
+  if (cell.mine) { triggerLoss(r, c); return; }
+  if (cell.adjacent === 0) neighbors(r, c).forEach(([nr, nc]) => revealCell(nr, nc));
 }
 
 function handleRightClick(r, c) {
-  if (gameOver) return;
-  if (firstClick) return;
+  if (gameOver || firstClick) return;
   const cell = board[r][c];
   if (cell.revealed) return;
-  cell.flag = (cell.flag + 1) % 3; // 0 none -> 1 flag -> 2 question -> 0
-  flagsPlaced += (cell.flag === 1) ? 1 : (cell.flag === 0 ? -1 : 0);
+  cell.flag = !cell.flag;
+  flagsPlaced += cell.flag ? 1 : -1;
   mineCounterEl.textContent = formatCounter(MINES - flagsPlaced);
   renderBoard();
 }
@@ -381,43 +391,51 @@ function handleChord(r, c) {
   const cell = board[r][c];
   if (!cell.revealed || cell.adjacent === 0) return;
   const neigh = neighbors(r, c);
-  const flaggedCount = neigh.filter(([nr, nc]) => board[nr][nc].flag === 1).length;
+  const flaggedCount = neigh.filter(([nr, nc]) => board[nr][nc].flag).length;
   if (flaggedCount !== cell.adjacent) return;
-  neigh.forEach(([nr, nc]) => {
-    if (board[nr][nc].flag !== 1) revealCell(nr, nc);
-  });
+  neigh.forEach(([nr, nc]) => { if (!board[nr][nc].flag) revealCell(nr, nc); });
   renderBoard();
   checkWin();
 }
 
 function triggerLoss(explodedR, explodedC) {
-  gameOver = true;
-  gameWon = false;
+  gameOver = true; gameWon = false;
   clearInterval(timerInterval);
   faceBtn.textContent = '😵';
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      const cell = board[r][c];
-      if (cell.mine && cell.flag !== 1) cell.revealed = true;
-    }
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const cell = board[r][c];
+    if (cell.mine && !cell.flag) cell.revealed = true;
   }
   board[explodedR][explodedC].exploded = true;
+  renderBoard();
+  setTimeout(() => {
+    endCard.classList.add('lose');
+    endIcon.textContent = '💥';
+    endTitle.textContent = 'Bom! Mayına Bastın';
+    endStats.innerHTML = `Süre: <b>${timerDisplayEl.textContent}</b> saniye`;
+    endOverlay.classList.remove('hidden');
+  }, 500);
 }
 
 function checkWin() {
   if (gameOver) return;
   const totalSafe = ROWS * COLS - MINES;
   if (revealedCount === totalSafe) {
-    gameOver = true;
-    gameWon = true;
+    gameOver = true; gameWon = true;
     clearInterval(timerInterval);
     faceBtn.textContent = '😎';
-    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
-      if (board[r][c].mine) board[r][c].flag = 1;
-    }
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (board[r][c].mine) board[r][c].flag = true;
     flagsPlaced = MINES;
     mineCounterEl.textContent = formatCounter(0);
     renderBoard();
+    setTimeout(() => {
+      endCard.classList.remove('lose');
+      endIcon.textContent = '🏆';
+      endTitle.textContent = 'Tebrikler, Kazandın!';
+      endStats.innerHTML = `Süre: <b>${timerDisplayEl.textContent}</b> saniye`;
+      endOverlay.classList.remove('hidden');
+      spawnConfetti();
+    }, 400);
   }
 }
 
@@ -436,10 +454,8 @@ function renderBoard() {
       const idx = r * COLS + c;
       const el = cells[idx];
       const cell = board[r][c];
-
       el.className = 'cell';
       el.textContent = '';
-
       if (cell.revealed) {
         el.classList.add('revealed');
         if (cell.mine) {
@@ -451,41 +467,41 @@ function renderBoard() {
         }
       } else {
         el.classList.add('covered');
-        if (cell.flag === 1) el.textContent = '🚩';
-        else if (cell.flag === 2) el.textContent = '❓';
-        if (gameOver && !gameWon && cell.flag === 1 && !cell.mine) el.textContent = '❌';
+        if (cell.flag) el.textContent = '🚩';
+        if (gameOver && !gameWon && cell.flag && !cell.mine) el.textContent = '❌';
       }
     }
   }
 }
 
 faceBtn.addEventListener('click', () => initGame(currentDiff));
-
-gameMenuBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  gameMenu.classList.toggle('hidden');
-  gameMenuBtn.classList.toggle('open');
+newGameBtn.addEventListener('click', () => initGame(currentDiff));
+changeDiffBtn.addEventListener('click', () => {
+  clearInterval(timerInterval);
+  gameWrap.classList.add('hidden');
+  diffCard.classList.remove('hidden');
 });
-document.addEventListener('click', () => {
-  gameMenu.classList.add('hidden');
-  gameMenuBtn.classList.remove('open');
-});
+endNewGameBtn.addEventListener('click', () => { endOverlay.classList.add('hidden'); initGame(currentDiff); });
 
-gameMenu.querySelectorAll('.menu-option').forEach(opt => {
-  opt.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (opt.dataset.action === 'new') initGame(currentDiff);
-    else if (opt.dataset.diff) initGame(opt.dataset.diff);
-    else if (opt.dataset.action === 'exit-link') window.location.href = 'index.html';
-    gameMenu.classList.add('hidden');
-  });
-});
+document.addEventListener('contextmenu', (e) => { if (e.target.closest('.board')) e.preventDefault(); });
 
-document.addEventListener('contextmenu', (e) => {
-  if (e.target.closest('.board')) e.preventDefault();
-});
-
-initGame('beginner');
+function spawnConfetti() {
+  const colors = ['#f4cc6a', '#ffe29a', '#3fd8ae', '#ff9d9d', '#a99bd6', '#ffffff'];
+  for (let i = 0; i < 90; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 6 + Math.random() * 8;
+    piece.style.width = size + 'px';
+    piece.style.height = size * 0.4 + 'px';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    const duration = 2.6 + Math.random() * 2;
+    piece.style.animationDuration = duration + 's';
+    piece.style.animationDelay = (Math.random() * 0.6) + 's';
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), (duration + 1) * 1000);
+  }
+}
 </script>
 </body>
 </html>
