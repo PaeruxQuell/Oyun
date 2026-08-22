@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yıldız Cephesi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void: #0a0517; --deep: #170b34; --mid: #2a1454; --panel: #1c0f3f; --panel-2: #26134f;
+    --gold: #f4cc6a; --gold-bright: #ffe29a; --gold-deep: #b9862a;
+    --teal: #3fd8ae; --coral: #ff6f6f; --blue: #6aa6ff; --purple: #b18bff;
+    --text: #f6f3ff; --text-dim: #a99bd6;
+    --font-display: 'Cinzel', serif; --font-body: 'Manrope', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -8%, var(--mid) 0%, transparent 60%),
+      radial-gradient(ellipse 700px 500px at 90% 100%, rgba(63,216,174,0.08) 0%, transparent 55%),
+      linear-gradient(180deg, var(--deep) 0%, var(--void) 100%);
+    font-family: var(--font-body); color: var(--text);
+    display: flex; justify-content: center; padding: 20px 12px 60px; overflow-x: hidden; position: relative;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 15% 25%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 75% 15%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 45% 65%, rgba(255,255,255,0.45), transparent),
+      radial-gradient(1.5px 1.5px at 90% 55%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 25% 80%, rgba(255,255,255,0.4), transparent);
+    animation: twinkle 5s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+  .vignette { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse 80% 70% at 50% 30%, transparent 55%, rgba(5,3,15,0.75) 100%); }
+
+  .stage { width: 100%; max-width: 980px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .back-link { align-self: flex-start; color: var(--text-dim); text-decoration: none; font-size: 12.5px; font-weight: 700; }
+  .back-link:hover { color: var(--gold-bright); }
+
+  .title {
+    font-family: var(--font-display); font-weight: 800; letter-spacing: 3px;
+    font-size: clamp(24px, 5vw, 36px); text-align: center;
+    background: linear-gradient(100deg, var(--gold-deep) 0%, var(--gold-bright) 25%, #fffce0 45%, var(--gold-bright) 65%, var(--gold-deep) 100%);
+    background-size: 260% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: 0 0 50px rgba(244,204,106,0.25); margin: 0; animation: shimmerTitle 6s ease-in-out infinite;
+  }
+  @keyframes shimmerTitle { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  .subtitle { color: var(--text-dim); font-size: 11.5px; letter-spacing: 3px; text-transform: uppercase; margin-top: -8px; font-weight: 600; }
+
+  @keyframes revealPop { 0% { opacity:0; transform: scale(0.9) translateY(20px);} 60%{opacity:1; transform: scale(1.01) translateY(-3px);} 100%{opacity:1; transform: scale(1) translateY(0);} }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .panel {
+    background: linear-gradient(180deg, rgba(38,19,79,0.75), rgba(28,15,63,0.75));
+    backdrop-filter: blur(14px); border: 1.5px solid rgba(244,204,106,0.28);
+    border-radius: 18px; box-shadow: 0 0 0 1px rgba(244,204,106,0.08), 0 20px 45px rgba(0,0,0,0.5);
+  }
+
+  /* ---------- INTRO ---------- */
+  .intro-card { width: 100%; max-width: 560px; padding: 30px 26px; text-align: center; animation: revealPop 0.5s ease both; }
+  .intro-card p { color: var(--text-dim); font-size: 13.5px; line-height: 1.7; margin: 10px 0; text-align: left; }
+  .intro-card h4 { color: var(--gold-bright); font-family: var(--font-display); font-size: 14px; margin: 16px 0 6px; }
+
+  /* ---------- DECK BUILDER ---------- */
+  .deck-wrap { width: 100%; padding: 20px; animation: revealPop 0.5s ease both; }
+  .deck-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .deck-total { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--gold-bright); }
+  .deck-total.ready { color: var(--teal); }
+  .deck-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .cat-section { margin-bottom: 18px; }
+  .cat-title { font-family: var(--font-display); font-size: 13.5px; color: var(--gold); letter-spacing: 1px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid rgba(244,204,106,0.2); }
+  .card-row {
+    display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 10px;
+    background: rgba(20,10,48,0.4); margin-bottom: 5px; font-size: 12px;
+  }
+  .card-row .cname { flex: 1; font-weight: 700; color: var(--text); }
+  .card-row .cdesc { flex: 2; color: var(--text-dim); font-size: 11px; }
+  .card-row .ccost { color: var(--gold-bright); font-weight: 700; font-size: 11px; min-width: 54px; text-align: right; }
+  .stepper { display: flex; align-items: center; gap: 6px; }
+  .stepper button {
+    width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--gold-deep); background: transparent;
+    color: var(--gold-bright); font-weight: 800; cursor: pointer; font-size: 13px; line-height: 1;
+  }
+  .stepper button:hover { border-color: var(--gold-bright); }
+  .stepper span { min-width: 16px; text-align: center; font-family: var(--font-display); font-weight: 800; color: var(--teal); }
+
+  .ctrl-btn {
+    background: transparent; border: 1.5px solid var(--gold-deep); color: var(--gold-bright);
+    border-radius: 24px; padding: 10px 20px; font-weight: 700; font-size: 12.5px; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.15s ease;
+  }
+  .ctrl-btn:hover:not(:disabled) { background: rgba(244,204,106,0.1); border-color: var(--gold-bright); transform: translateY(-2px); }
+  .ctrl-btn:disabled { opacity: 0.35; cursor: default; }
+  .ctrl-btn.primary { background: linear-gradient(180deg, var(--gold-bright), var(--gold-deep)); color: #1a1200; border: none; }
+
+  /* ---------- PASS SCREEN ---------- */
+  .pass-card { width: 100%; max-width: 460px; padding: 50px 30px; text-align: center; animation: revealPop 0.5s ease both; }
+  .pass-card .who { font-family: var(--font-display); font-size: 28px; color: var(--gold-bright); margin-bottom: 12px; }
+  .pass-card p { color: var(--text-dim); font-size: 13px; margin-bottom: 24px; }
+
+  /* ---------- GAME SCREEN ---------- */
+  .game-wrap { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+
+  .stat-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; gap: 10px; flex-wrap: wrap; }
+  .stat-side { display: flex; flex-direction: column; gap: 4px; min-width: 130px; }
+  .stat-side.enemy { align-items: flex-end; text-align: right; }
+  .stat-name { font-family: var(--font-display); font-size: 13px; color: var(--gold-bright); font-weight: 700; }
+  .stat-hp-row { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+  .hp-bar-track { width: 100px; height: 7px; background: rgba(0,0,0,0.4); border-radius: 4px; overflow: hidden; }
+  .hp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--coral), var(--gold-bright)); transition: width 0.3s ease; }
+  .shield-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--teal)); transition: width 0.3s ease; }
+  .stat-resources { display: flex; gap: 8px; font-size: 11px; color: var(--text-dim); }
+  .stat-resources span { display: flex; align-items: center; gap: 3px; }
+  .vs-icon { font-size: 22px; }
+
+  .turn-indicator {
+    text-align: center; font-family: var(--font-display); font-size: 14px; color: var(--teal); font-weight: 700;
+    padding: 6px; letter-spacing: 0.5px;
+  }
+
+  .hand-wrap { padding: 16px; }
+  .hand-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 10px; text-align: center; }
+  .hand-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+
+  .hand-card {
+    background: linear-gradient(180deg, rgba(42,26,85,0.9), rgba(23,11,52,0.9));
+    border: 1.5px solid var(--gold-deep); border-radius: 12px; padding: 10px;
+    display: flex; flex-direction: column; gap: 6px; cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    position: relative;
+  }
+  .hand-card:hover { transform: translateY(-4px); border-color: var(--gold-bright); box-shadow: 0 10px 22px -8px rgba(244,204,106,0.5); }
+  .hand-card.unaffordable { opacity: 0.4; cursor: default; }
+  .hand-card.unaffordable:hover { transform: none; box-shadow: none; }
+  .hc-name { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: var(--gold-bright); line-height: 1.25; }
+  .hc-cost { font-size: 10.5px; font-weight: 700; }
+  .hc-cost.energy { color: var(--gold); }
+  .hc-cost.mineral { color: var(--purple); }
+  .hc-cost.biomass { color: var(--teal); }
+  .hc-desc { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
+
+  .controls-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  .log-panel { padding: 10px 14px; max-height: 90px; overflow-y: auto; font-size: 11px; color: var(--text-dim); }
+  .log-panel div { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+
+  /* ---------- WIN OVERLAY ---------- */
+  .win-overlay {
+    position: fixed; inset: 0; background: rgba(5,3,15,0.85); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; z-index: 700; animation: fadeIn 0.4s ease both;
+  }
+  .win-card {
+    background: linear-gradient(180deg, rgba(38,19,79,0.95), rgba(23,11,52,0.97));
+    border: 2px solid var(--gold-deep); border-radius: 22px; padding: 40px 34px;
+    text-align: center; max-width: 400px; width: 90%;
+    box-shadow: 0 0 60px -10px rgba(244,204,106,0.4), 0 30px 70px rgba(0,0,0,0.6);
+    animation: revealPop 0.5s cubic-bezier(.22,1,.36,1) both;
+  }
+  .win-icon { font-size: 52px; margin-bottom: 8px; }
+  .win-title { font-family: var(--font-display); font-size: 24px; color: var(--gold-bright); font-weight: 800; margin-bottom: 10px; }
+  .win-stats { color: var(--text-dim); font-size: 13.5px; margin-bottom: 22px; line-height: 1.7; }
+
+  .confetti-piece { position: fixed; top: -20px; z-index: 800; pointer-events: none; border-radius: 2px; animation: confettiFall linear forwards; }
+  @keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(105vh) rotate(720deg); opacity: 0.9; } }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="vignette"></div>
+
+<div class="stage">
+  <a class="back-link" href="index.html">← Arcade'e Dön</a>
+  <div class="subtitle">İKİ OYUNCULU KART SAVAŞI</div>
+  <div class="title">Yıldız Cephesi</div>
+
+  <!-- INTRO -->
+  <div class="panel intro-card" id="introCard">
+    <p>İki oyuncu sırayla kart oynayarak <b style="color:var(--gold-bright)">Üs</b>lerini güçlendirir ya da rakibin <b style="color:var(--gold-bright)">Kalkan</b>ını kırıp Üssüne saldırır.</p>
+    <h4>⚡ Enerji · 💎 Mineral · 🧬 Biyokütle</h4>
+    <p>Bu 3 kaynağı, çalıştırdığın işçilerle her turun başında otomatik üretirsin. Kartları bu kaynaklarla satın alıp oynarsın.</p>
+    <h4>🏆 Kazanma Yolları</h4>
+    <p>Üs canını <b style="color:var(--teal)">200</b>'e çıkar (inşa zaferi) ya da rakibin Üs canını <b style="color:var(--coral)">0</b>'a indir (saldırı zaferi).</p>
+    <div class="controls-row" style="margin-top:10px;">
+      <button class="ctrl-btn primary" id="startBuildBtn">Desteleri Oluşturmaya Başla →</button>
+    </div>
+  </div>
+
+  <!-- DECK BUILDER -->
+  <div class="panel deck-wrap hidden" id="deckWrap">
+    <div class="deck-header">
+      <div>Oyuncu <span id="deckPlayerNum">1</span> Destesi</div>
+      <div class="deck-total" id="deckTotal">0 / 50</div>
+      <div class="deck-actions">
+        <button class="ctrl-btn" id="autoFillBtn">🎲 Otomatik Doldur</button>
+        <button class="ctrl-btn" id="resetDeckBtn">🗑 Sıfırla</button>
+      </div>
+    </div>
+    <div id="deckCategories"></div>
+    <div class="controls-row" style="margin-top:14px;">
+      <button class="ctrl-btn primary" id="confirmDeckBtn" disabled>Deste Onayla →</button>
+    </div>
+  </div>
+
+  <!-- PASS SCREEN -->
+  <div class="panel pass-card hidden" id="passCard">
+    <div class="who" id="passWho">Oyuncu 1</div>
+    <p>Sıra sende. Ekranı diğer oyuncu görmeden devam et.</p>
+    <button class="ctrl-btn primary" id="passReadyBtn">Hazırım →</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div class="game-wrap hidden" id="gameWrap">
+    <div class="panel stat-bar">
+      <div class="stat-side" id="statSelf"></div>
+      <div class="vs-icon">🛰️ VS 🛰️</div>
+      <div class="stat-side enemy" id="statEnemy"></div>
+    </div>
+    <div class="turn-indicator" id="turnIndicator">Oyuncu 1'in Sırası</div>
+    <div class="panel hand-wrap">
+      <div class="hand-label" id="handLabel">Elindeki Kartlar</div>
+      <div class="hand-grid" id="handGrid"></div>
+    </div>
+    <div class="controls-row">
+      <button class="ctrl-btn" id="passTurnBtn">⏭ Sırayı Geç</button>
+    </div>
+    <div class="panel log-panel" id="logPanel"></div>
+  </div>
+</div>
+
+<div class="win-overlay hidden" id="winOverlay">
+  <div class="win-card">
+    <div class="win-icon" id="winIcon">🏆</div>
+    <div class="win-title" id="winTitle">Oyuncu 1 Kazandı!</div>
+    <div class="win-stats" id="winStats"></div>
+    <button class="ctrl-btn primary" id="restartBtn" style="padding: 12px 28px;">🔄 Yeni Oyun</button>
+  </div>
+</div>
+
+<script>
+// ============ CARD DEFINITIONS ============
+const CARDS = [
+  { id: 1, name: 'Enerji Bariyeri', cat: 'energy', cost: { r: 'energy', a: 1 }, desc: 'Kalkan +3', fx: [{ t: 'shield', a: 3 }] },
+  { id: 2, name: 'Gözlem Kulesi', cat: 'energy', cost: { r: 'energy', a: 4 }, desc: 'Üs +4', fx: [{ t: 'base', a: 4 }] },
+  { id: 3, name: 'Enerji İstasyonu', cat: 'energy', cost: { r: 'energy', a: 8 }, desc: 'Teknisyen +1', fx: [{ t: 'worker', w: 'energyWorker', a: 1 }] },
+  { id: 4, name: 'Enerji Kalkanı Mk.I', cat: 'energy', cost: { r: 'energy', a: 7 }, desc: 'Kalkan +10', fx: [{ t: 'shield', a: 10 }] },
+  { id: 5, name: 'Manyetik Bariyer', cat: 'energy', cost: { r: 'energy', a: 3 }, desc: 'Kalkan +5', fx: [{ t: 'shield', a: 5 }] },
+  { id: 6, name: 'Enerji Deposu', cat: 'energy', cost: { r: 'energy', a: 10 }, desc: 'Enerji +8, Kalkan +4', fx: [{ t: 'resource', r: 'energy', a: 8 }, { t: 'shield', a: 4 }] },
+  { id: 7, name: 'Radar Kulesi', cat: 'energy', cost: { r: 'energy', a: 6 }, desc: 'Üs +7', fx: [{ t: 'base', a: 7 }] },
+  { id: 8, name: 'Elektrik Tuzağı', cat: 'energy', cost: { r: 'energy', a: 5 }, desc: 'Kalkan +4, Rakip Biyokütle -3', fx: [{ t: 'shield', a: 4 }, { t: 'enemyResource', r: 'biomass', a: 3 }] },
+  { id: 9, name: 'Robotik Atölye', cat: 'energy', cost: { r: 'energy', a: 14 }, desc: 'Teknisyen +2', fx: [{ t: 'worker', w: 'energyWorker', a: 2 }] },
+  { id: 10, name: 'Güçlendirilmiş Kapı', cat: 'energy', cost: { r: 'energy', a: 9 }, desc: 'Kalkan +14', fx: [{ t: 'shield', a: 14 }] },
+  { id: 11, name: 'Enerji Köprüsü', cat: 'energy', cost: { r: 'energy', a: 2 }, desc: 'Kalkan +3, Enerji +2', fx: [{ t: 'shield', a: 3 }, { t: 'resource', r: 'energy', a: 2 }] },
+  { id: 12, name: 'EMP Sabotajı', cat: 'energy', cost: { r: 'energy', a: 5 }, desc: 'Rakip Kalkan -6', fx: [{ t: 'enemyShield', a: 6 }] },
+  { id: 13, name: 'Rüzgar Türbini', cat: 'energy', cost: { r: 'energy', a: 11 }, desc: 'Teknisyen +1, Üs +6', fx: [{ t: 'worker', w: 'energyWorker', a: 1 }, { t: 'base', a: 6 }] },
+  { id: 14, name: 'Enerji Rampası', cat: 'energy', cost: { r: 'energy', a: 4 }, desc: 'Biyokütle +3, Kalkan +2', fx: [{ t: 'resource', r: 'biomass', a: 3 }, { t: 'shield', a: 2 }] },
+  { id: 15, name: 'Mega Enerji Kalkanı', cat: 'energy', cost: { r: 'energy', a: 16 }, desc: 'Kalkan +20, Üs +5', fx: [{ t: 'shield', a: 20 }, { t: 'base', a: 5 }] },
+  { id: 16, name: 'Nano Kaplama', cat: 'energy', cost: { r: 'energy', a: 8 }, desc: 'Kalkan +11', fx: [{ t: 'shield', a: 11 }] },
+  { id: 17, name: 'Füzyon Reaktörü', cat: 'energy', cost: { r: 'energy', a: 12 }, desc: 'Teknisyen +1, Enerji +6', fx: [{ t: 'worker', w: 'energyWorker', a: 1 }, { t: 'resource', r: 'energy', a: 6 }] },
+
+  { id: 18, name: 'Titanyum Duvar', cat: 'mineral', cost: { r: 'mineral', a: 2 }, desc: 'Kalkan +5', fx: [{ t: 'shield', a: 5 }] },
+  { id: 19, name: 'Asteroit Madeni', cat: 'mineral', cost: { r: 'mineral', a: 8 }, desc: 'Madenci +1', fx: [{ t: 'worker', w: 'mineralWorker', a: 1 }] },
+  { id: 20, name: 'Zırh Kaplama Kule', cat: 'mineral', cost: { r: 'mineral', a: 6 }, desc: 'Üs +8', fx: [{ t: 'base', a: 8 }] },
+  { id: 21, name: 'Derin Kazı Sondajı', cat: 'mineral', cost: { r: 'mineral', a: 15 }, desc: 'Madenci +2', fx: [{ t: 'worker', w: 'mineralWorker', a: 2 }] },
+  { id: 22, name: 'Asit Havuzu', cat: 'mineral', cost: { r: 'mineral', a: 4 }, desc: 'Rakip Kalkan -6', fx: [{ t: 'enemyShield', a: 6 }] },
+  { id: 23, name: 'Çelik Tahkimat', cat: 'mineral', cost: { r: 'mineral', a: 12 }, desc: 'Üs +15', fx: [{ t: 'base', a: 15 }] },
+  { id: 24, name: 'Metal Kalkan Jeneratörü', cat: 'mineral', cost: { r: 'mineral', a: 10 }, desc: 'Kalkan +16', fx: [{ t: 'shield', a: 16 }] },
+  { id: 25, name: 'Meteor Yağmuru', cat: 'mineral', cost: { r: 'mineral', a: 7 }, desc: '8 Hasar', fx: [{ t: 'damage', a: 8 }] },
+  { id: 26, name: 'Plazma Mermi', cat: 'mineral', cost: { r: 'mineral', a: 9 }, desc: '10 Hasar', fx: [{ t: 'damage', a: 10 }] },
+  { id: 27, name: 'Rail Gun', cat: 'mineral', cost: { r: 'mineral', a: 14 }, desc: '18 Hasar', fx: [{ t: 'damage', a: 18 }] },
+  { id: 28, name: 'Mineral Korsanı', cat: 'mineral', cost: { r: 'mineral', a: 5 }, desc: 'Rakip Mineral -6, Mineral +4', fx: [{ t: 'enemyResource', r: 'mineral', a: 6 }, { t: 'resource', r: 'mineral', a: 4 }] },
+  { id: 29, name: 'Yeraltı Sığınağı', cat: 'mineral', cost: { r: 'mineral', a: 8 }, desc: 'Üs +10, Kalkan +3', fx: [{ t: 'base', a: 10 }, { t: 'shield', a: 3 }] },
+  { id: 30, name: 'Adamantiyum Kalkan', cat: 'mineral', cost: { r: 'mineral', a: 18 }, desc: 'Kalkan +25', fx: [{ t: 'shield', a: 25 }] },
+  { id: 31, name: 'Tünel Çökmesi', cat: 'mineral', cost: { r: 'mineral', a: 6 }, desc: 'Her İki Madenci -1', fx: [{ t: 'bothWorker', w: 'mineralWorker', a: 1 }] },
+  { id: 32, name: 'Robot Fabrikası', cat: 'mineral', cost: { r: 'mineral', a: 11 }, desc: 'Madenci +1, Kalkan +6', fx: [{ t: 'worker', w: 'mineralWorker', a: 1 }, { t: 'shield', a: 6 }] },
+  { id: 33, name: 'Kalkan Kırıcı Top', cat: 'mineral', cost: { r: 'mineral', a: 5 }, desc: 'Rakip Kalkanına 9 Hasar', fx: [{ t: 'enemyShield', a: 9 }] },
+  { id: 34, name: 'Bio-Kubbe Tahkimatı', cat: 'mineral', cost: { r: 'mineral', a: 20 }, desc: 'Üs +20, Kalkan +10', fx: [{ t: 'base', a: 20 }, { t: 'shield', a: 10 }] },
+
+  { id: 35, name: 'Drone Saldırısı', cat: 'biomass', cost: { r: 'biomass', a: 1 }, desc: '2 Hasar', fx: [{ t: 'damage', a: 2 }] },
+  { id: 36, name: 'Kaşif Üssü', cat: 'biomass', cost: { r: 'biomass', a: 8 }, desc: 'Kaşif +1', fx: [{ t: 'worker', w: 'biomassWorker', a: 1 }] },
+  { id: 37, name: 'Mutant Sürüsü', cat: 'biomass', cost: { r: 'biomass', a: 3 }, desc: '4 Hasar', fx: [{ t: 'damage', a: 4 }] },
+  { id: 38, name: 'Lazer Piyade', cat: 'biomass', cost: { r: 'biomass', a: 4 }, desc: '5 Hasar', fx: [{ t: 'damage', a: 5 }] },
+  { id: 39, name: 'Bio-Canavar Saldırısı', cat: 'biomass', cost: { r: 'biomass', a: 7 }, desc: '9 Hasar', fx: [{ t: 'damage', a: 9 }] },
+  { id: 40, name: 'Bio-Sentez Ziyafeti', cat: 'biomass', cost: { r: 'biomass', a: 6 }, desc: 'Üs +8', fx: [{ t: 'base', a: 8 }] },
+  { id: 41, name: 'Klon Birimi Üretimi', cat: 'biomass', cost: { r: 'biomass', a: 15 }, desc: 'Kaşif +2', fx: [{ t: 'worker', w: 'biomassWorker', a: 2 }] },
+  { id: 42, name: 'Gölge Operasyonu', cat: 'biomass', cost: { r: 'biomass', a: 8 }, desc: 'Doğrudan Üsse 7 Hasar (Kalkanı yok sayar)', fx: [{ t: 'directBase', a: 7 }] },
+  { id: 43, name: 'Uzay Korsanları', cat: 'biomass', cost: { r: 'biomass', a: 10 }, desc: '11 Hasar, Rakipten 4/4/4 kaynak çalar', fx: [{ t: 'damage', a: 11 }, { t: 'steal', r: 'energy', a: 4 }, { t: 'steal', r: 'mineral', a: 4 }, { t: 'steal', r: 'biomass', a: 4 }] },
+  { id: 44, name: 'Toksik Roket', cat: 'biomass', cost: { r: 'biomass', a: 5 }, desc: '6 Hasar', fx: [{ t: 'damage', a: 6 }] },
+  { id: 45, name: 'Ağır Saldırı Birliği', cat: 'biomass', cost: { r: 'biomass', a: 12 }, desc: '14 Hasar', fx: [{ t: 'damage', a: 14 }] },
+  { id: 46, name: 'Biyo-Virüs Saldırısı', cat: 'biomass', cost: { r: 'biomass', a: 7 }, desc: 'Rakip Biyokütle -8, Rakip Kaşif -1', fx: [{ t: 'enemyResource', r: 'biomass', a: 8 }, { t: 'enemyWorker', w: 'biomassWorker', a: 1 }] },
+  { id: 47, name: 'Dev Savaş Robotu', cat: 'biomass', cost: { r: 'biomass', a: 18 }, desc: '22 Hasar', fx: [{ t: 'damage', a: 22 }] },
+  { id: 48, name: 'Bio-Depo', cat: 'biomass', cost: { r: 'biomass', a: 5 }, desc: 'Biyokütle +8, Üs +3', fx: [{ t: 'resource', r: 'biomass', a: 8 }, { t: 'base', a: 3 }] },
+  { id: 49, name: 'Doğal Seçilim Protokolü', cat: 'biomass', cost: { r: 'biomass', a: 22 }, desc: 'Üs +20, 10 Hasar', fx: [{ t: 'base', a: 20 }, { t: 'damage', a: 10 }] },
+  { id: 50, name: 'Genel Seferberlik', cat: 'biomass', cost: { r: 'biomass', a: 14 }, desc: 'Kaşif +1, Teknisyen +1, Madenci +1', fx: [{ t: 'worker', w: 'biomassWorker', a: 1 }, { t: 'worker', w: 'energyWorker', a: 1 }, { t: 'worker', w: 'mineralWorker', a: 1 }] }
+];
+
+const RESOURCE_ICON = { energy: '⚡', mineral: '💎', biomass: '🧬' };
+const RESOURCE_NAME = { energy: 'Enerji', mineral: 'Mineral', biomass: 'Biyokütle' };
+const CAT_NAME = { energy: '⚡ Enerji Kartları', mineral: '💎 Mineral Kartları', biomass: '🧬 Biyokütle Kartları' };
+const MAX_COPIES = 5;
+const DECK_SIZE = 50;
+const START_HAND = 8;
+const WIN_BASE = 200;
+
+function makeInitialPlayerState(name) {
+  return {
+    name,
+    base: 50,
+    shield: 10,
+    resources: { energy: 0, mineral: 0, biomass: 0 },
+    workers: { energyWorker: 1, mineralWorker: 1, biomassWorker: 1 },
+    deckConfig: {},
+    drawPile: [],
+    hand: []
+  };
+}
+
+let players = [makeInitialPlayerState('Oyuncu 1'), makeInitialPlayerState('Oyuncu 2')];
+let buildingDeckFor = 0;
+let currentTurn = 0;
+let gameLog = [];
+let gameOver = false;
+
+const introCard = document.getElementById('introCard');
+const deckWrap = document.getElementById('deckWrap');
+const deckPlayerNum = document.getElementById('deckPlayerNum');
+const deckTotal = document.getElementById('deckTotal');
+const deckCategories = document.getElementById('deckCategories');
+const autoFillBtn = document.getElementById('autoFillBtn');
+const resetDeckBtn = document.getElementById('resetDeckBtn');
+const confirmDeckBtn = document.getElementById('confirmDeckBtn');
+const passCard = document.getElementById('passCard');
+const passWho = document.getElementById('passWho');
+const passReadyBtn = document.getElementById('passReadyBtn');
+const gameWrap = document.getElementById('gameWrap');
+const statSelf = document.getElementById('statSelf');
+const statEnemy = document.getElementById('statEnemy');
+const turnIndicator = document.getElementById('turnIndicator');
+const handLabel = document.getElementById('handLabel');
+const handGrid = document.getElementById('handGrid');
+const passTurnBtn = document.getElementById('passTurnBtn');
+const logPanel = document.getElementById('logPanel');
+const winOverlay = document.getElementById('winOverlay');
+const winIcon = document.getElementById('winIcon');
+const winTitle = document.getElementById('winTitle');
+const winStats = document.getElementById('winStats');
+const restartBtn = document.getElementById('restartBtn');
+const startBuildBtn = document.getElementById('startBuildBtn');
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+startBuildBtn.addEventListener('click', () => {
+  introCard.classList.add('hidden');
+  buildingDeckFor = 0;
+  openDeckBuilder(0);
+});
+
+function openDeckBuilder(playerIdx) {
+  buildingDeckFor = playerIdx;
+  deckWrap.classList.remove('hidden');
+  deckPlayerNum.textContent = playerIdx + 1;
+  if (Object.keys(players[playerIdx].deckConfig).length === 0) {
+    CARDS.forEach(c => { players[playerIdx].deckConfig[c.id] = 0; });
+  }
+  renderDeckBuilder();
+}
+
+function renderDeckBuilder() {
+  const config = players[buildingDeckFor].deckConfig;
+  deckCategories.innerHTML = '';
+  ['energy', 'mineral', 'biomass'].forEach(cat => {
+    const section = document.createElement('div');
+    section.className = 'cat-section';
+    const title = document.createElement('div');
+    title.className = 'cat-title';
+    title.textContent = CAT_NAME[cat];
+    section.appendChild(title);
+    CARDS.filter(c => c.cat === cat).forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'card-row';
+      const count = config[c.id] || 0;
+      row.innerHTML = `
+        <span class="cname">${c.name}</span>
+        <span class="cdesc">${c.desc}</span>
+        <span class="ccost">${c.cost.a} ${RESOURCE_ICON[c.cost.r]}</span>
+        <span class="stepper">
+          <button class="dec">−</button>
+          <span>${count}</span>
+          <button class="inc">+</button>
+        </span>
+      `;
+      row.querySelector('.dec').addEventListener('click', () => adjustDeckCount(c.id, -1));
+      row.querySelector('.inc').addEventListener('click', () => adjustDeckCount(c.id, 1));
+      section.appendChild(row);
+    });
+    deckCategories.appendChild(section);
+  });
+  updateDeckTotal();
+}
+
+function adjustDeckCount(cardId, delta) {
+  const config = players[buildingDeckFor].deckConfig;
+  const cur = config[cardId] || 0;
+  const total = Object.values(config).reduce((a, b) => a + b, 0);
+  const next = cur + delta;
+  if (next < 0 || next > MAX_COPIES) return;
+  if (delta > 0 && total >= DECK_SIZE) return;
+  config[cardId] = next;
+  renderDeckBuilder();
+}
+
+function updateDeckTotal() {
+  const config = players[buildingDeckFor].deckConfig;
+  const total = Object.values(config).reduce((a, b) => a + b, 0);
+  deckTotal.textContent = `${total} / ${DECK_SIZE}`;
+  deckTotal.classList.toggle('ready', total === DECK_SIZE);
+  confirmDeckBtn.disabled = total !== DECK_SIZE;
+}
+
+autoFillBtn.addEventListener('click', () => {
+  const config = players[buildingDeckFor].deckConfig;
+  CARDS.forEach(c => { config[c.id] = 0; });
+  let remaining = DECK_SIZE;
+  const shuffledCards = shuffle(CARDS.slice());
+  let i = 0;
+  while (remaining > 0) {
+    const c = shuffledCards[i % shuffledCards.length];
+    if (config[c.id] < MAX_COPIES) { config[c.id]++; remaining--; }
+    i++;
+    if (i > 10000) break;
+  }
+  renderDeckBuilder();
+});
+
+resetDeckBtn.addEventListener('click', () => {
+  const config = players[buildingDeckFor].deckConfig;
+  CARDS.forEach(c => { config[c.id] = 0; });
+  renderDeckBuilder();
+});
+
+confirmDeckBtn.addEventListener('click', () => {
+  if (buildingDeckFor === 0) {
+    deckWrap.classList.add('hidden');
+    openDeckBuilder(1);
+  } else {
+    deckWrap.classList.add('hidden');
+    beginMatch();
+  }
+});
+
+function beginMatch() {
+  players.forEach(p => {
+    const pile = [];
+    Object.entries(p.deckConfig).forEach(([cardId, count]) => {
+      for (let i = 0; i < count; i++) pile.push(parseInt(cardId, 10));
+    });
+    shuffle(pile);
+    p.hand = pile.splice(0, START_HAND);
+    p.drawPile = pile;
+  });
+  currentTurn = 0;
+  gameLog = [];
+  gameOver = false;
+  addLog('Savaş başladı! ' + players[0].name + " ilk hamleyi yapıyor.");
+  showPassScreen();
+}
+
+function showPassScreen() {
+  gameWrap.classList.add('hidden');
+  passCard.classList.remove('hidden');
+  passWho.textContent = players[currentTurn].name;
+}
+
+passReadyBtn.addEventListener('click', () => {
+  passCard.classList.add('hidden');
+  gameWrap.classList.remove('hidden');
+  startTurn();
+});
+
+function startTurn() {
+  const self = players[currentTurn];
+  self.resources.energy += self.workers.energyWorker;
+  self.resources.mineral += self.workers.mineralWorker;
+  self.resources.biomass += self.workers.biomassWorker;
+  renderGame();
+}
+
+function cardById(id) { return CARDS.find(c => c.id === id); }
+
+function affordable(card, player) {
+  return player.resources[card.cost.r] >= card.cost.a;
+}
+
+function renderGame() {
+  const self = players[currentTurn];
+  const enemy = players[1 - currentTurn];
+
+  statSelf.innerHTML = renderStatBlock(self);
+  statEnemy.innerHTML = renderStatBlock(enemy);
+  turnIndicator.textContent = `${self.name}'in Sırası`;
+  handLabel.textContent = `${self.name} — Elindeki Kartlar (${self.hand.length})`;
+
+  handGrid.innerHTML = '';
+  self.hand.forEach((cardId, handIdx) => {
+    const card = cardById(cardId);
+    const canAfford = affordable(card, self);
+    const el = document.createElement('div');
+    el.className = 'hand-card' + (canAfford ? '' : ' unaffordable');
+    el.innerHTML = `
+      <div class="hc-name">${card.name}</div>
+      <div class="hc-cost ${card.cost.r}">${card.cost.a} ${RESOURCE_ICON[card.cost.r]} ${RESOURCE_NAME[card.cost.r]}</div>
+      <div class="hc-desc">${card.desc}</div>
+    `;
+    if (canAfford) el.addEventListener('click', () => playCard(handIdx));
+    handGrid.appendChild(el);
+  });
+
+  logPanel.innerHTML = gameLog.slice(-6).map(l => `<div>${l}</div>`).join('');
+  logPanel.scrollTop = logPanel.scrollHeight;
+}
+
+function renderStatBlock(p) {
+  const shieldPct = Math.min(100, (p.shield / 50) * 100);
+  const basePct = Math.min(100, (p.base / WIN_BASE) * 100);
+  return `
+    <div class="stat-name">${p.name}</div>
+    <div class="stat-hp-row"><span>🛸 ${p.base}/${WIN_BASE}</span><div class="hp-bar-track"><div class="hp-bar-fill" style="width:${basePct}%"></div></div></div>
+    <div class="stat-hp-row"><span>🛡️ ${p.shield}</span><div class="hp-bar-track"><div class="shield-bar-fill" style="width:${shieldPct}%"></div></div></div>
+    <div class="stat-resources">
+      <span>⚡${p.resources.energy}</span><span>💎${p.resources.mineral}</span><span>🧬${p.resources.biomass}</span>
+    </div>
+    <div class="stat-resources">
+      <span>🔧${p.workers.energyWorker}</span><span>⛏️${p.workers.mineralWorker}</span><span>🔭${p.workers.biomassWorker}</span>
+    </div>
+  `;
+}
+
+function addLog(text) { gameLog.push(text); }
+
+function applyEffect(fx, self, enemy) {
+  switch (fx.t) {
+    case 'shield': self.shield += fx.a; break;
+    case 'base': self.base += fx.a; break;
+    case 'resource': self.resources[fx.r] += fx.a; break;
+    case 'worker': self.workers[fx.w] += fx.a; break;
+    case 'enemyShield': enemy.shield = Math.max(0, enemy.shield - fx.a); break;
+    case 'directBase': enemy.base = Math.max(0, enemy.base - fx.a); break;
+    case 'enemyResource': enemy.resources[fx.r] = Math.max(0, enemy.resources[fx.r] - fx.a); break;
+    case 'enemyWorker': enemy.workers[fx.w] = Math.max(0, enemy.workers[fx.w] - fx.a); break;
+    case 'bothWorker':
+      self.workers[fx.w] = Math.max(0, self.workers[fx.w] - fx.a);
+      enemy.workers[fx.w] = Math.max(0, enemy.workers[fx.w] - fx.a);
+      break;
+    case 'steal':
+      enemy.resources[fx.r] = Math.max(0, enemy.resources[fx.r] - fx.a);
+      self.resources[fx.r] += fx.a;
+      break;
+    case 'damage': {
+      let dmg = fx.a;
+      if (enemy.shield >= dmg) { enemy.shield -= dmg; }
+      else { dmg -= enemy.shield; enemy.shield = 0; enemy.base = Math.max(0, enemy.base - dmg); }
+      break;
+    }
+  }
+}
+
+function playCard(handIdx) {
+  if (gameOver) return;
+  const self = players[currentTurn];
+  const enemy = players[1 - currentTurn];
+  const cardId = self.hand[handIdx];
+  const card = cardById(cardId);
+  if (!affordable(card, self)) return;
+
+  self.resources[card.cost.r] -= card.cost.a;
+  card.fx.forEach(fx => applyEffect(fx, self, enemy));
+  self.hand.splice(handIdx, 1);
+  if (self.drawPile.length > 0) self.hand.push(self.drawPile.pop());
+
+  addLog(`${self.name}: "${card.name}" oynadı — ${card.desc}`);
+
+  if (checkWin()) return;
+  endTurn();
+}
+
+function checkWin() {
+  const self = players[currentTurn];
+  const enemy = players[1 - currentTurn];
+  if (self.base >= WIN_BASE) { declareWin(currentTurn, 'İnşa Zaferi'); return true; }
+  if (enemy.base <= 0) { declareWin(currentTurn, 'Saldırı Zaferi'); return true; }
+  if (self.base <= 0) { declareWin(1 - currentTurn, 'Saldırı Zaferi'); return true; }
+  if (enemy.base >= WIN_BASE) { declareWin(1 - currentTurn, 'İnşa Zaferi'); return true; }
+  return false;
+}
+
+function declareWin(winnerIdx, type) {
+  gameOver = true;
+  const winner = players[winnerIdx];
+  winIcon.textContent = type === 'İnşa Zaferi' ? '🏛️' : '💥';
+  winTitle.textContent = `${winner.name} Kazandı!`;
+  winStats.innerHTML = `Zafer Türü: <b style="color:var(--teal)">${type}</b><br>Üs Canı: <b style="color:var(--gold-bright)">${winner.base}</b> · Kalkan: <b style="color:var(--gold-bright)">${winner.shield}</b>`;
+  winOverlay.classList.remove('hidden');
+  spawnConfetti();
+}
+
+passTurnBtn.addEventListener('click', () => { if (!gameOver) { addLog(`${players[currentTurn].name} sırasını geçti.`); endTurn(); } });
+
+function endTurn() {
+  currentTurn = 1 - currentTurn;
+  showPassScreen();
+}
+
+restartBtn.addEventListener('click', () => {
+  winOverlay.classList.add('hidden');
+  players = [makeInitialPlayerState('Oyuncu 1'), makeInitialPlayerState('Oyuncu 2')];
+  currentTurn = 0;
+  gameLog = [];
+  gameOver = false;
+  gameWrap.classList.add('hidden');
+  passCard.classList.add('hidden');
+  deckWrap.classList.add('hidden');
+  introCard.classList.remove('hidden');
+});
+
+function spawnConfetti() {
+  const colors = ['#f4cc6a', '#ffe29a', '#3fd8ae', '#ff9d9d', '#a99bd6', '#ffffff'];
+  for (let i = 0; i < 90; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 6 + Math.random() * 8;
+    piece.style.width = size + 'px';
+    piece.style.height = size * 0.4 + 'px';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    const duration = 2.6 + Math.random() * 2;
+    piece.style.animationDuration = duration + 's';
+    piece.style.animationDelay = (Math.random() * 0.6) + 's';
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), (duration + 1) * 1000);
+  }
+}
+</script>
+</body>
+</html>
