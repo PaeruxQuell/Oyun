@@ -38,7 +38,7 @@
   @keyframes twinkle { 0% { opacity: 0.5; } 100% { opacity: 1; } }
   .vignette { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse 80% 70% at 50% 30%, transparent 55%, rgba(5,3,15,0.75) 100%); }
 
-  .stage { width: 100%; max-width: 1080px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .stage { width: 100%; max-width: 1320px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
   .back-link { align-self: flex-start; color: var(--text-dim); text-decoration: none; font-size: 12.5px; font-weight: 700; }
   .back-link:hover { color: var(--gold-bright); }
 
@@ -175,44 +175,51 @@
   @keyframes bannerPulseTeal { 0%, 100% { box-shadow: 0 0 16px rgba(63,216,174,0.28); } 50% { box-shadow: 0 0 30px rgba(63,216,174,0.55); } }
   .turn-banner.p2 { animation-name: bannerPulseTeal; }
 
-  .stat-bar { display: flex; justify-content: space-between; align-items: flex-start; padding: 18px 20px; gap: 10px; flex-wrap: wrap; }
-  .stat-side { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 160px; }
-  .stat-name { font-family: var(--font-display); font-size: 13.5px; color: var(--gold-bright); font-weight: 700; }
+  .battle-layout { display: flex; gap: 16px; align-items: flex-start; width: 100%; }
+  .center-col { flex: 1; min-width: 0; }
+  @media (max-width: 1100px) { .battle-layout { flex-direction: column; } .base-panel { width: 100% !important; } }
+
+  .base-panel {
+    width: 250px; flex-shrink: 0; padding: 20px 16px; display: flex; flex-direction: column;
+    align-items: center; gap: 10px; transition: box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+  .base-panel.active-p1 { border-color: var(--gold-bright); box-shadow: 0 0 0 1px rgba(244,204,106,0.15), 0 0 40px rgba(244,204,106,0.4); }
+  .base-panel.active-p2 { border-color: var(--teal); box-shadow: 0 0 0 1px rgba(63,216,174,0.15), 0 0 40px rgba(63,216,174,0.4); }
+  .stat-name { font-family: var(--font-display); font-size: 16px; color: var(--gold-bright); font-weight: 700; }
 
   /* ---------- BASE VISUAL (real artwork, grows with HP) ---------- */
-  .base-visual { position: relative; width: 132px; height: 104px; margin: 4px 0; }
+  .base-visual { position: relative; width: 200px; height: 168px; margin: 6px 0; }
   .base-img-wrap { position: absolute; inset: 0; transform-origin: bottom center; transition: transform 0.4s ease; }
   .base-img {
-    width: 100%; height: 100%; border-radius: 12px;
+    width: 100%; height: 100%; border-radius: 14px;
     background-size: cover; background-position: center 38%;
-    border: 2px solid var(--gold-deep); box-shadow: 0 0 20px rgba(244,204,106,0.35), inset 0 0 20px rgba(0,0,0,0.3);
+    border: 2px solid var(--gold-deep); box-shadow: 0 0 26px rgba(244,204,106,0.35), inset 0 0 24px rgba(0,0,0,0.3);
   }
   .shield-img {
-    position: absolute; inset: -16px; border-radius: 50%;
+    position: absolute; inset: -22px; border-radius: 50%;
     background-size: cover; background-position: center;
     mix-blend-mode: screen; pointer-events: none; transition: opacity 0.4s ease;
     animation: shieldPulse 2.6s ease-in-out infinite;
   }
   @keyframes shieldPulse { 0%, 100% { filter: brightness(1.25); } 50% { filter: brightness(1.55); } }
 
-  .stat-hp-row { display: flex; align-items: center; gap: 6px; font-size: 11px; justify-content: center; }
-  .hp-bar-track { width: 100px; height: 7px; background: rgba(0,0,0,0.4); border-radius: 4px; overflow: hidden; }
+  .stat-hp-row { display: flex; align-items: center; gap: 8px; font-size: 13px; justify-content: center; }
+  .hp-bar-track { width: 140px; height: 9px; background: rgba(0,0,0,0.4); border-radius: 5px; overflow: hidden; }
   .hp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--coral), var(--gold-bright)); transition: width 0.3s ease; }
   .shield-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--teal)); transition: width 0.3s ease; }
 
-  .stat-resources { display: flex; gap: 8px; font-size: 12px; color: var(--text-dim); justify-content: center; flex-wrap: wrap; }
-  .stat-resources span { display: flex; align-items: center; gap: 3px; background: rgba(0,0,0,0.25); padding: 3px 8px; border-radius: 10px; font-weight: 700; }
+  .stat-resources { display: flex; gap: 8px; font-size: 13px; color: var(--text-dim); justify-content: center; flex-wrap: wrap; }
+  .stat-resources span { display: flex; align-items: center; gap: 3px; background: rgba(0,0,0,0.25); padding: 4px 9px; border-radius: 10px; font-weight: 700; }
 
-  .worker-row { display: flex; flex-direction: column; gap: 4px; align-items: center; }
-  .worker-total { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--gold-bright); font-weight: 700; background: rgba(0,0,0,0.25); padding: 3px 10px; border-radius: 10px; }
-  .worker-split { display: flex; gap: 8px; font-size: 10.5px; }
+  .worker-row { display: flex; flex-direction: column; gap: 5px; align-items: center; }
+  .worker-total { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--gold-bright); font-weight: 700; background: rgba(0,0,0,0.25); padding: 4px 11px; border-radius: 10px; }
+  .worker-split { display: flex; gap: 9px; font-size: 12px; }
   .worker-split span { display: flex; align-items: center; gap: 3px; font-weight: 700; }
-
-  .vs-icon { font-size: 20px; margin-top: 40px; opacity: 0.7; }
 
   .hand-wrap { padding: 16px; }
   .hand-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 10px; text-align: center; }
-  .hand-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  .hand-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; transition: opacity 0.2s ease; }
+  .hand-grid.locked { pointer-events: none; opacity: 0.55; }
 
   .hand-card {
     background: linear-gradient(180deg, rgba(42,26,85,0.9), rgba(23,11,52,0.9));
@@ -230,12 +237,12 @@
   .hand-card:hover:not(.unaffordable) { transform: translateY(-4px); border-color: var(--gold-bright); box-shadow: 0 10px 22px -8px rgba(244,204,106,0.5); }
   .hand-card.unaffordable { opacity: 0.4; filter: grayscale(0.75) brightness(0.6); cursor: default; }
   .hc-art { width: 100%; height: 66px; border-radius: 8px; background-size: cover; background-position: center; border: 1px solid rgba(244,204,106,0.25); box-shadow: inset 0 0 14px rgba(0,0,0,0.5); margin: 1px 0 2px; }
-  .hc-name { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: var(--gold-bright); line-height: 1.25; }
-  .hc-cost { font-size: 10.5px; font-weight: 700; }
+  .hc-name { font-family: var(--font-display); font-weight: 700; font-size: 13.5px; color: var(--gold-bright); line-height: 1.3; }
+  .hc-cost { font-size: 12px; font-weight: 700; }
   .hc-cost.energy { color: var(--gold); }
   .hc-cost.mineral { color: var(--purple); }
   .hc-cost.biomass { color: var(--teal); }
-  .hc-desc { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
+  .hc-desc { font-size: 12px; color: var(--text-dim); line-height: 1.45; font-weight: 500; }
 
   .controls-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .log-panel { padding: 10px 14px; max-height: 90px; overflow-y: auto; font-size: 11px; color: var(--text-dim); }
@@ -317,29 +324,30 @@
   <!-- GAME SCREEN -->
   <div class="game-wrap hidden" id="gameWrap">
     <div class="turn-banner" id="turnBanner">🎯 Oyuncu 1'in Sırası</div>
-    <div class="panel stat-bar">
-      <div class="stat-side" id="statSelf"></div>
-      <div class="vs-icon">🛰️ VS 🛰️</div>
-      <div class="stat-side enemy" id="statEnemy"></div>
-    </div>
-    <div class="main-columns">
-      <div class="panel worker-panel">
-        <div class="wp-title">👷 İşçi Yönetimi</div>
-        <div class="wp-sub">Toplam işçi: <b id="wpTotal">3</b></div>
-        <div id="wpRows"></div>
-        <div class="wp-remaining">Boşta: <b id="wpRemaining">0</b></div>
-        <div class="wp-note">Bu dağılım bir sonraki turunun başında o kaynağı üretir.</div>
-      </div>
-      <div class="right-col">
-        <div class="panel hand-wrap">
-          <div class="hand-label" id="handLabel">Elindeki Kartlar</div>
-          <div class="hand-grid" id="handGrid"></div>
+    <div class="battle-layout">
+      <div class="panel base-panel" id="baseP1"></div>
+      <div class="center-col">
+        <div class="main-columns">
+          <div class="panel worker-panel">
+            <div class="wp-title">👷 İşçi Yönetimi</div>
+            <div class="wp-sub">Toplam işçi: <b id="wpTotal">3</b></div>
+            <div id="wpRows"></div>
+            <div class="wp-remaining">Boşta: <b id="wpRemaining">0</b></div>
+            <div class="wp-note">Bu dağılım bir sonraki turunun başında o kaynağı üretir.</div>
+          </div>
+          <div class="right-col">
+            <div class="panel hand-wrap">
+              <div class="hand-label" id="handLabel">Elindeki Kartlar</div>
+              <div class="hand-grid" id="handGrid"></div>
+            </div>
+            <div class="controls-row">
+              <button class="ctrl-btn" id="passTurnBtn">⏭ Sırayı Geç</button>
+            </div>
+            <div class="panel log-panel" id="logPanel"></div>
+          </div>
         </div>
-        <div class="controls-row">
-          <button class="ctrl-btn" id="passTurnBtn">⏭ Sırayı Geç</button>
-        </div>
-        <div class="panel log-panel" id="logPanel"></div>
       </div>
+      <div class="panel base-panel" id="baseP2"></div>
     </div>
   </div>
 </div>
@@ -455,6 +463,7 @@ let buildingDeckFor = 0;
 let currentTurn = 0;
 let gameLog = [];
 let gameOver = false;
+let turnLocked = false;
 let deckFilter = 'all';
 
 const introCard = document.getElementById('introCard');
@@ -473,8 +482,8 @@ const passWho = document.getElementById('passWho');
 const passReadyBtn = document.getElementById('passReadyBtn');
 const gameWrap = document.getElementById('gameWrap');
 const turnBanner = document.getElementById('turnBanner');
-const statSelf = document.getElementById('statSelf');
-const statEnemy = document.getElementById('statEnemy');
+const baseP1 = document.getElementById('baseP1');
+const baseP2 = document.getElementById('baseP2');
 const handLabel = document.getElementById('handLabel');
 const handGrid = document.getElementById('handGrid');
 const passTurnBtn = document.getElementById('passTurnBtn');
@@ -706,6 +715,7 @@ function adjustAssign(r, delta) {
 }
 
 function startTurn() {
+  turnLocked = false;
   const self = players[currentTurn];
   self.resources.energy += self.assignment.energy;
   self.resources.mineral += self.assignment.mineral;
@@ -720,12 +730,15 @@ function renderGame() {
   const self = players[currentTurn];
   const enemy = players[1 - currentTurn];
   renderWorkerPanel();
+  handGrid.classList.remove('locked');
 
   turnBanner.textContent = `🎯 ${self.name}'in Sırası`;
   turnBanner.className = 'turn-banner' + (currentTurn === 1 ? ' p2' : '');
 
-  statSelf.innerHTML = renderStatBlock(self);
-  statEnemy.innerHTML = renderStatBlock(enemy);
+  baseP1.innerHTML = renderStatBlock(players[0]);
+  baseP2.innerHTML = renderStatBlock(players[1]);
+  baseP1.className = 'panel base-panel' + (currentTurn === 0 ? ' active-p1' : '');
+  baseP2.className = 'panel base-panel' + (currentTurn === 1 ? ' active-p2' : '');
   handLabel.textContent = `${self.name} — Elindeki Kartlar (${self.hand.length})`;
 
   handGrid.innerHTML = '';
@@ -830,13 +843,14 @@ function triggerCardFlashes(card) {
 }
 
 function playCard(handIdx) {
-  if (gameOver) return;
+  if (gameOver || turnLocked) return;
   const self = players[currentTurn];
   const enemy = players[1 - currentTurn];
   const cardId = self.hand[handIdx];
   const card = cardById(cardId);
   if (!affordable(card, self)) return;
 
+  turnLocked = true;
   self.resources[card.cost.r] -= card.cost.a;
   card.fx.forEach(fx => applyEffect(fx, self, enemy));
   clampAssignment(self);
@@ -847,6 +861,7 @@ function playCard(handIdx) {
   addLog(`${self.name}: "${card.name}" oynadı — ${card.desc}`);
   triggerCardFlashes(card);
   renderGame();
+  handGrid.classList.add('locked');
 
   if (checkWin()) return;
   setTimeout(() => { if (!gameOver) endTurn(); }, 900);
@@ -872,7 +887,7 @@ function declareWin(winnerIdx, type) {
   spawnConfetti();
 }
 
-passTurnBtn.addEventListener('click', () => { if (!gameOver) { addLog(`${players[currentTurn].name} sırasını geçti.`); endTurn(); } });
+passTurnBtn.addEventListener('click', () => { if (!gameOver && !turnLocked) { turnLocked = true; addLog(`${players[currentTurn].name} sırasını geçti.`); endTurn(); } });
 
 function endTurn() {
   currentTurn = 1 - currentTurn;
