@@ -82,38 +82,45 @@
   .intro-card p { color: var(--text-dim); font-size: 13.5px; line-height: 1.7; margin: 10px 0; text-align: left; }
   .intro-card h4 { color: var(--gold-bright); font-family: var(--font-display); font-size: 14px; margin: 16px 0 6px; }
 
-  /* ---------- DECK BUILDER (10-column grid) ---------- */
-  .deck-wrap { width: 100%; padding: 20px; animation: revealPop 0.5s ease both; }
-  .deck-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  /* ---------- DECK BUILDER (responsive column grid) ---------- */
+  .deck-wrap { width: 100%; padding: 20px; animation: revealPop 0.5s ease both; box-sizing: border-box; max-width: 100%; }
+  .deck-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
   .deck-total { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--gold-bright); }
   .deck-total.ready { color: var(--teal); }
   .deck-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  .deck-grid {
-    display: grid; grid-template-columns: repeat(10, 1fr); grid-auto-flow: column;
-    grid-template-rows: repeat(5, auto); gap: 8px; max-height: 70vh; overflow-y: auto; padding-right: 4px;
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .filter-btn {
+    background: rgba(20,10,48,0.5); border: 1.5px solid var(--gold-deep); color: var(--text-dim);
+    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.15s ease; display: flex; align-items: center; gap: 6px;
   }
-  @media (max-width: 900px) { .deck-grid { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(10, auto); } }
-  @media (max-width: 560px) { .deck-grid { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(17, auto); } }
+  .filter-btn:hover { border-color: var(--gold-bright); color: var(--text); }
+  .filter-btn.active { background: linear-gradient(180deg, var(--gold-bright), var(--gold-deep)); color: #1a1200; border-color: var(--gold-bright); }
+  .filter-btn.active.f-mineral { background: linear-gradient(180deg, #d4bfff, var(--purple)); }
+  .filter-btn.active.f-biomass { background: linear-gradient(180deg, #8ff7d4, var(--teal)); }
+
+  .deck-grid-wrap { max-height: 62vh; overflow-y: auto; padding-right: 6px; }
+  .deck-grid { display: grid; gap: 10px; }
 
   .deck-tile {
-    background: rgba(20,10,48,0.55); border: 1.5px solid var(--gold-deep); border-radius: 10px;
-    padding: 6px; display: flex; flex-direction: column; gap: 3px; font-size: 10px; border-top-width: 4px;
+    background: rgba(20,10,48,0.55); border: 1.5px solid var(--gold-deep); border-radius: 12px;
+    padding: 9px; display: flex; flex-direction: column; gap: 5px; font-size: 12px; border-top-width: 4px;
   }
   .deck-tile.cat-energy { border-top-color: var(--gold); }
   .deck-tile.cat-mineral { border-top-color: var(--purple); }
   .deck-tile.cat-biomass { border-top-color: var(--teal); }
-  .dt-art { width: 100%; height: 42px; border-radius: 6px; background-size: cover; background-position: center; }
-  .dt-name { font-family: var(--font-display); font-weight: 700; font-size: 9.5px; color: var(--gold-bright); line-height: 1.15; min-height: 22px; }
-  .dt-cost { font-size: 9px; font-weight: 700; color: var(--text-dim); }
-  .dt-desc { font-size: 8px; color: var(--text-dim); line-height: 1.25; min-height: 20px; }
-  .dt-stepper { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 2px; }
+  .dt-art { width: 100%; height: 92px; border-radius: 8px; background-size: cover; background-position: center; border: 1px solid rgba(244,204,106,0.2); }
+  .dt-name { font-family: var(--font-display); font-weight: 700; font-size: 12.5px; color: var(--gold-bright); line-height: 1.25; min-height: 32px; }
+  .dt-cost { font-size: 11px; font-weight: 700; color: var(--text-dim); }
+  .dt-desc { font-size: 10.5px; color: var(--text-dim); line-height: 1.35; min-height: 28px; }
+  .dt-stepper { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px; }
   .dt-stepper button {
-    width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--gold-deep); background: transparent;
-    color: var(--gold-bright); font-weight: 800; cursor: pointer; font-size: 11px; line-height: 1;
+    width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--gold-deep); background: transparent;
+    color: var(--gold-bright); font-weight: 800; cursor: pointer; font-size: 14px; line-height: 1;
   }
   .dt-stepper button:hover { border-color: var(--gold-bright); }
-  .dt-stepper span { min-width: 14px; text-align: center; font-family: var(--font-display); font-weight: 800; color: var(--teal); font-size: 11px; }
+  .dt-stepper span { min-width: 18px; text-align: center; font-family: var(--font-display); font-weight: 800; color: var(--teal); font-size: 13px; }
 
   .ctrl-btn {
     background: transparent; border: 1.5px solid var(--gold-deep); color: var(--gold-bright);
@@ -129,22 +136,32 @@
   .pass-card .who { font-family: var(--font-display); font-size: 28px; color: var(--gold-bright); margin-bottom: 12px; }
   .pass-card p { color: var(--text-dim); font-size: 13px; margin-bottom: 24px; }
 
-  /* ---------- WORKER ASSIGNMENT SCREEN ---------- */
-  .assign-card { width: 100%; max-width: 480px; padding: 30px 26px; text-align: center; animation: revealPop 0.5s ease both; }
-  .assign-title { font-family: var(--font-display); font-size: 18px; color: var(--gold-bright); margin-bottom: 6px; }
-  .assign-sub { color: var(--text-dim); font-size: 13px; margin-bottom: 18px; }
-  .assign-rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-  .assign-row {
-    display: flex; align-items: center; gap: 10px; background: rgba(20,10,48,0.5);
-    border: 1px solid rgba(244,204,106,0.2); border-radius: 12px; padding: 10px 14px;
-  }
-  .assign-icon { font-size: 18px; }
-  .assign-name { flex: 1; text-align: left; font-weight: 700; font-size: 13px; }
-  .assign-preview { font-size: 11px; color: var(--teal); font-weight: 700; min-width: 64px; text-align: right; }
-  .assign-remaining { font-size: 13px; color: var(--gold-bright); font-weight: 700; margin-bottom: 16px; }
-
   /* ---------- GAME SCREEN ---------- */
   .game-wrap { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+
+  .main-columns { display: flex; gap: 14px; align-items: flex-start; }
+  .right-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+  @media (max-width: 820px) { .main-columns { flex-direction: column; } }
+
+  .worker-panel { width: 220px; flex-shrink: 0; padding: 16px; }
+  @media (max-width: 820px) { .worker-panel { width: 100%; } }
+  .wp-title { font-family: var(--font-display); font-size: 15px; color: var(--gold-bright); font-weight: 700; margin-bottom: 4px; text-align: center; }
+  .wp-sub { color: var(--text-dim); font-size: 12px; margin-bottom: 12px; text-align: center; }
+  .wp-row {
+    display: flex; align-items: center; gap: 8px; background: rgba(20,10,48,0.5);
+    border: 1px solid rgba(244,204,106,0.2); border-radius: 12px; padding: 8px 10px; margin-bottom: 8px;
+  }
+  .wp-icon { font-size: 16px; }
+  .wp-name { flex: 1; text-align: left; font-weight: 700; font-size: 12px; }
+  .wp-stepper { display: flex; align-items: center; gap: 6px; }
+  .wp-stepper button {
+    width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--gold-deep); background: transparent;
+    color: var(--gold-bright); font-weight: 800; cursor: pointer; font-size: 12px; line-height: 1;
+  }
+  .wp-stepper button:hover { border-color: var(--gold-bright); }
+  .wp-stepper span { min-width: 14px; text-align: center; font-family: var(--font-display); font-weight: 800; color: var(--teal); font-size: 12px; }
+  .wp-remaining { font-size: 12px; color: var(--gold-bright); font-weight: 700; text-align: center; margin: 8px 0 6px; }
+  .wp-note { font-size: 10px; color: var(--text-dim); text-align: center; line-height: 1.4; }
 
   .turn-banner {
     text-align: center; padding: 12px 20px; border-radius: 16px;
@@ -276,7 +293,15 @@
         <button class="ctrl-btn" id="resetDeckBtn">🗑 Sıfırla</button>
       </div>
     </div>
-    <div class="deck-grid" id="deckGrid"></div>
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" data-filter="all">🌌 Tümü</button>
+      <button class="filter-btn f-energy" data-filter="energy"></button>
+      <button class="filter-btn f-mineral" data-filter="mineral"></button>
+      <button class="filter-btn f-biomass" data-filter="biomass"></button>
+    </div>
+    <div class="deck-grid-wrap" id="deckGridWrap">
+      <div class="deck-grid" id="deckGrid"></div>
+    </div>
     <div class="controls-row" style="margin-top:14px;">
       <button class="ctrl-btn primary" id="confirmDeckBtn" disabled>Deste Onayla →</button>
     </div>
@@ -289,15 +314,6 @@
     <button class="ctrl-btn primary" id="passReadyBtn">Hazırım →</button>
   </div>
 
-  <!-- WORKER ASSIGNMENT SCREEN -->
-  <div class="panel assign-card hidden" id="assignCard">
-    <div class="assign-title">İşçi Ataması — <span id="assignPlayerName">Oyuncu 1</span></div>
-    <p class="assign-sub">Toplam <b id="assignTotal">3</b> işçin var. Bu tur hangi kaynağı üreteceklerini seç.</p>
-    <div class="assign-rows" id="assignRows"></div>
-    <div class="assign-remaining">Boşta işçi: <b id="assignRemaining">0</b></div>
-    <button class="ctrl-btn primary" id="confirmAssignBtn">Üretimi Onayla ve Devam Et →</button>
-  </div>
-
   <!-- GAME SCREEN -->
   <div class="game-wrap hidden" id="gameWrap">
     <div class="turn-banner" id="turnBanner">🎯 Oyuncu 1'in Sırası</div>
@@ -306,14 +322,25 @@
       <div class="vs-icon">🛰️ VS 🛰️</div>
       <div class="stat-side enemy" id="statEnemy"></div>
     </div>
-    <div class="panel hand-wrap">
-      <div class="hand-label" id="handLabel">Elindeki Kartlar</div>
-      <div class="hand-grid" id="handGrid"></div>
+    <div class="main-columns">
+      <div class="panel worker-panel">
+        <div class="wp-title">👷 İşçi Yönetimi</div>
+        <div class="wp-sub">Toplam işçi: <b id="wpTotal">3</b></div>
+        <div id="wpRows"></div>
+        <div class="wp-remaining">Boşta: <b id="wpRemaining">0</b></div>
+        <div class="wp-note">Bu dağılım bir sonraki turunun başında o kaynağı üretir.</div>
+      </div>
+      <div class="right-col">
+        <div class="panel hand-wrap">
+          <div class="hand-label" id="handLabel">Elindeki Kartlar</div>
+          <div class="hand-grid" id="handGrid"></div>
+        </div>
+        <div class="controls-row">
+          <button class="ctrl-btn" id="passTurnBtn">⏭ Sırayı Geç</button>
+        </div>
+        <div class="panel log-panel" id="logPanel"></div>
+      </div>
     </div>
-    <div class="controls-row">
-      <button class="ctrl-btn" id="passTurnBtn">⏭ Sırayı Geç</button>
-    </div>
-    <div class="panel log-panel" id="logPanel"></div>
   </div>
 </div>
 
@@ -428,12 +455,15 @@ let buildingDeckFor = 0;
 let currentTurn = 0;
 let gameLog = [];
 let gameOver = false;
+let deckFilter = 'all';
 
 const introCard = document.getElementById('introCard');
 const deckWrap = document.getElementById('deckWrap');
 const deckPlayerNum = document.getElementById('deckPlayerNum');
 const deckTotal = document.getElementById('deckTotal');
 const deckGrid = document.getElementById('deckGrid');
+const deckGridWrap = document.getElementById('deckGridWrap');
+const filterBar = document.getElementById('filterBar');
 const standardDeckBtn = document.getElementById('standardDeckBtn');
 const autoFillBtn = document.getElementById('autoFillBtn');
 const resetDeckBtn = document.getElementById('resetDeckBtn');
@@ -441,12 +471,6 @@ const confirmDeckBtn = document.getElementById('confirmDeckBtn');
 const passCard = document.getElementById('passCard');
 const passWho = document.getElementById('passWho');
 const passReadyBtn = document.getElementById('passReadyBtn');
-const assignCard = document.getElementById('assignCard');
-const assignPlayerName = document.getElementById('assignPlayerName');
-const assignTotal = document.getElementById('assignTotal');
-const assignRows = document.getElementById('assignRows');
-const assignRemaining = document.getElementById('assignRemaining');
-const confirmAssignBtn = document.getElementById('confirmAssignBtn');
 const gameWrap = document.getElementById('gameWrap');
 const turnBanner = document.getElementById('turnBanner');
 const statSelf = document.getElementById('statSelf');
@@ -477,6 +501,24 @@ startBuildBtn.addEventListener('click', () => {
   openDeckBuilder(0);
 });
 
+// Fill filter button labels with icons
+filterBar.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+  const f = btn.dataset.filter;
+  if (f !== 'all') btn.innerHTML = `${ICON_SVG[f]} ${RESOURCE_NAME[f]}`;
+  btn.addEventListener('click', () => {
+    deckFilter = f;
+    filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderDeckBuilder();
+  });
+});
+
+function computeColumns() {
+  const width = deckGridWrap ? deckGridWrap.clientWidth : window.innerWidth;
+  const cols = Math.floor(width / 190);
+  return Math.max(2, Math.min(10, cols));
+}
+
 function applyStandardDeck(playerIdx) {
   const config = {};
   CARDS.forEach(c => { config[c.id] = 1; });
@@ -495,8 +537,16 @@ function openDeckBuilder(playerIdx) {
 
 function renderDeckBuilder() {
   const config = players[buildingDeckFor].deckConfig;
+  const filtered = deckFilter === 'all' ? CARDS : CARDS.filter(c => c.cat === deckFilter);
+
+  const cols = computeColumns();
+  const rows = Math.ceil(filtered.length / cols);
+  deckGrid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  deckGrid.style.gridTemplateRows = `repeat(${rows}, auto)`;
+  deckGrid.style.gridAutoFlow = 'column';
+
   deckGrid.innerHTML = '';
-  CARDS.forEach(c => {
+  filtered.forEach(c => {
     const count = config[c.id] || 0;
     const tile = document.createElement('div');
     tile.className = `deck-tile cat-${c.cat}`;
@@ -517,6 +567,11 @@ function renderDeckBuilder() {
   });
   updateDeckTotal();
 }
+
+window.addEventListener('resize', () => {
+  if (!deckWrap.classList.contains('hidden')) renderDeckBuilder();
+});
+
 
 function adjustDeckCount(cardId, delta) {
   const config = players[buildingDeckFor].deckConfig;
@@ -590,18 +645,17 @@ function beginMatch() {
 
 function showPassScreen() {
   gameWrap.classList.add('hidden');
-  assignCard.classList.add('hidden');
   passCard.classList.remove('hidden');
   passWho.textContent = players[currentTurn].name;
 }
 
 passReadyBtn.addEventListener('click', () => {
   passCard.classList.add('hidden');
-  assignCard.classList.remove('hidden');
-  renderAssignScreen();
+  gameWrap.classList.remove('hidden');
+  startTurn();
 });
 
-// ---------- WORKER ASSIGNMENT ----------
+// ---------- WORKER ASSIGNMENT (now a persistent panel next to the hand) ----------
 function clampAssignment(p) {
   const keys = ['energy', 'mineral', 'biomass'];
   let sum = keys.reduce((s, k) => s + p.assignment[k], 0);
@@ -616,31 +670,30 @@ function clampAssignment(p) {
   }
 }
 
-function renderAssignScreen() {
+function renderWorkerPanel() {
   const p = players[currentTurn];
   clampAssignment(p);
-  assignPlayerName.textContent = p.name;
-  assignTotal.textContent = p.workers.total;
-  assignRows.innerHTML = '';
+  document.getElementById('wpTotal').textContent = p.workers.total;
+  const wpRows = document.getElementById('wpRows');
+  wpRows.innerHTML = '';
   ['energy', 'mineral', 'biomass'].forEach(r => {
     const row = document.createElement('div');
-    row.className = 'assign-row';
+    row.className = 'wp-row';
     row.innerHTML = `
-      <span class="assign-icon" style="color:${RESOURCE_COLOR[r]}">${ICON_SVG[r]}</span>
-      <span class="assign-name">${RESOURCE_NAME[r]}</span>
-      <span class="stepper" style="display:flex;align-items:center;gap:8px;">
-        <button class="dec" style="width:26px;height:26px;border-radius:50%;border:1.5px solid var(--gold-deep);background:transparent;color:var(--gold-bright);font-weight:800;cursor:pointer;">−</button>
-        <span style="min-width:18px;text-align:center;font-family:var(--font-display);font-weight:800;color:var(--teal);">${p.assignment[r]}</span>
-        <button class="inc" style="width:26px;height:26px;border-radius:50%;border:1.5px solid var(--gold-deep);background:transparent;color:var(--gold-bright);font-weight:800;cursor:pointer;">+</button>
+      <span class="wp-icon" style="color:${RESOURCE_COLOR[r]}">${ICON_SVG[r]}</span>
+      <span class="wp-name">${RESOURCE_NAME[r]}</span>
+      <span class="wp-stepper">
+        <button class="dec">−</button>
+        <span>${p.assignment[r]}</span>
+        <button class="inc">+</button>
       </span>
-      <span class="assign-preview">+${p.assignment[r]} bu tur</span>
     `;
     row.querySelector('.dec').addEventListener('click', () => adjustAssign(r, -1));
     row.querySelector('.inc').addEventListener('click', () => adjustAssign(r, 1));
-    assignRows.appendChild(row);
+    wpRows.appendChild(row);
   });
   const used = p.assignment.energy + p.assignment.mineral + p.assignment.biomass;
-  assignRemaining.textContent = p.workers.total - used;
+  document.getElementById('wpRemaining').textContent = p.workers.total - used;
 }
 
 function adjustAssign(r, delta) {
@@ -649,14 +702,8 @@ function adjustAssign(r, delta) {
   if (delta > 0 && used >= p.workers.total) return;
   if (delta < 0 && p.assignment[r] <= 0) return;
   p.assignment[r] += delta;
-  renderAssignScreen();
+  renderWorkerPanel();
 }
-
-confirmAssignBtn.addEventListener('click', () => {
-  assignCard.classList.add('hidden');
-  gameWrap.classList.remove('hidden');
-  startTurn();
-});
 
 function startTurn() {
   const self = players[currentTurn];
@@ -672,6 +719,7 @@ function affordable(card, player) { return player.resources[card.cost.r] >= card
 function renderGame() {
   const self = players[currentTurn];
   const enemy = players[1 - currentTurn];
+  renderWorkerPanel();
 
   turnBanner.textContent = `🎯 ${self.name}'in Sırası`;
   turnBanner.className = 'turn-banner' + (currentTurn === 1 ? ' p2' : '');
@@ -839,7 +887,6 @@ restartBtn.addEventListener('click', () => {
   gameOver = false;
   gameWrap.classList.add('hidden');
   passCard.classList.add('hidden');
-  assignCard.classList.add('hidden');
   deckWrap.classList.add('hidden');
   introCard.classList.remove('hidden');
 });
