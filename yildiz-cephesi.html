@@ -470,7 +470,7 @@ function renderDeckBuilder() {
     section.className = 'cat-section';
     const title = document.createElement('div');
     title.className = 'cat-title';
-    title.textContent = CAT_NAME[cat];
+    title.innerHTML = CAT_NAME[cat];
     section.appendChild(title);
     CARDS.filter(c => c.cat === cat).forEach(c => {
       const row = document.createElement('div');
