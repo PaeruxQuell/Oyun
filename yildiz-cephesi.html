@@ -107,17 +107,61 @@
   /* ---------- GAME SCREEN ---------- */
   .game-wrap { width: 100%; display: flex; flex-direction: column; gap: 12px; }
 
-  .stat-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; gap: 10px; flex-wrap: wrap; }
-  .stat-side { display: flex; flex-direction: column; gap: 4px; min-width: 130px; }
-  .stat-side.enemy { align-items: flex-end; text-align: right; }
-  .stat-name { font-family: var(--font-display); font-size: 13px; color: var(--gold-bright); font-weight: 700; }
-  .stat-hp-row { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+  .stat-bar { display: flex; justify-content: space-between; align-items: flex-start; padding: 18px 20px; gap: 10px; flex-wrap: wrap; }
+  .stat-side { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 150px; }
+  .stat-name { font-family: var(--font-display); font-size: 13.5px; color: var(--gold-bright); font-weight: 700; }
+
+  /* ---------- BASE VISUAL (grows with HP) ---------- */
+  .base-visual { position: relative; width: 110px; height: 118px; display: flex; align-items: flex-end; justify-content: center; }
+  .shield-dome {
+    position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+    border-radius: 50%; border: 2.5px solid var(--teal);
+    background: radial-gradient(circle at 50% 40%, rgba(63,216,174,0.18), transparent 70%);
+    box-shadow: 0 0 18px rgba(63,216,174,0.55), inset 0 0 14px rgba(63,216,174,0.3);
+    transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+    animation: domePulse 2.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes domePulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.25); } }
+
+  .base-tower {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column-reverse; align-items: center; gap: 2px;
+    transition: transform 0.4s ease;
+  }
+  .tower-segment {
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold-deep));
+    border-radius: 4px; box-shadow: 0 0 10px rgba(244,204,106,0.5), inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .tower-core {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fffce0, var(--gold-bright) 60%, var(--gold-deep));
+    box-shadow: 0 0 16px rgba(244,204,106,0.8);
+    animation: coreGlow 2s ease-in-out infinite;
+    margin-bottom: 2px;
+  }
+  @keyframes coreGlow { 0%, 100% { box-shadow: 0 0 12px rgba(244,204,106,0.6); } 50% { box-shadow: 0 0 22px rgba(244,204,106,0.95); } }
+
+  .stat-hp-row { display: flex; align-items: center; gap: 6px; font-size: 11px; justify-content: center; }
   .hp-bar-track { width: 100px; height: 7px; background: rgba(0,0,0,0.4); border-radius: 4px; overflow: hidden; }
   .hp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--coral), var(--gold-bright)); transition: width 0.3s ease; }
   .shield-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--teal)); transition: width 0.3s ease; }
-  .stat-resources { display: flex; gap: 8px; font-size: 11px; color: var(--text-dim); }
-  .stat-resources span { display: flex; align-items: center; gap: 3px; }
-  .vs-icon { font-size: 22px; }
+
+  .stat-resources { display: flex; gap: 10px; font-size: 12px; color: var(--text-dim); justify-content: center; flex-wrap: wrap; }
+  .stat-resources span { display: flex; align-items: center; gap: 3px; background: rgba(0,0,0,0.25); padding: 3px 8px; border-radius: 10px; font-weight: 700; }
+
+  .worker-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .worker-badge {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    background: rgba(20,10,48,0.5); border: 1px solid rgba(244,204,106,0.25);
+    border-radius: 10px; padding: 5px 8px; min-width: 44px;
+  }
+  .worker-badge .w-icon { font-size: 15px; }
+  .worker-badge .w-dots { display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; max-width: 50px; }
+  .worker-badge .w-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 4px var(--teal); }
+  .worker-badge .w-count { font-family: var(--font-display); font-size: 11px; color: var(--gold-bright); font-weight: 800; }
+
+  .vs-icon { font-size: 20px; margin-top: 40px; opacity: 0.7; }
 
   .turn-indicator {
     text-align: center; font-family: var(--font-display); font-size: 14px; color: var(--teal); font-weight: 700;
@@ -133,11 +177,20 @@
     border: 1.5px solid var(--gold-deep); border-radius: 12px; padding: 10px;
     display: flex; flex-direction: column; gap: 6px; cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-    position: relative;
+    position: relative; overflow: hidden;
+    animation: cardIn 0.35s ease both;
   }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .hand-card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .hand-card.cat-energy::before { background: linear-gradient(90deg, var(--gold), var(--gold-bright)); }
+  .hand-card.cat-mineral::before { background: linear-gradient(90deg, var(--purple), #d4bfff); }
+  .hand-card.cat-biomass::before { background: linear-gradient(90deg, var(--teal), #8ff7d4); }
   .hand-card:hover { transform: translateY(-4px); border-color: var(--gold-bright); box-shadow: 0 10px 22px -8px rgba(244,204,106,0.5); }
   .hand-card.unaffordable { opacity: 0.4; cursor: default; }
   .hand-card.unaffordable:hover { transform: none; box-shadow: none; }
+  .hc-icon { font-size: 20px; text-align: center; margin-bottom: 2px; }
   .hc-name { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: var(--gold-bright); line-height: 1.25; }
   .hc-cost { font-size: 10.5px; font-weight: 700; }
   .hc-cost.energy { color: var(--gold); }
@@ -198,7 +251,8 @@
       <div>Oyuncu <span id="deckPlayerNum">1</span> Destesi</div>
       <div class="deck-total" id="deckTotal">0 / 50</div>
       <div class="deck-actions">
-        <button class="ctrl-btn" id="autoFillBtn">🎲 Otomatik Doldur</button>
+        <button class="ctrl-btn" id="standardDeckBtn">⚖️ Standart Deste</button>
+        <button class="ctrl-btn" id="autoFillBtn">🎲 Rastgele Doldur</button>
         <button class="ctrl-btn" id="resetDeckBtn">🗑 Sıfırla</button>
       </div>
     </div>
@@ -313,7 +367,7 @@ function makeInitialPlayerState(name) {
     name,
     base: 50,
     shield: 10,
-    resources: { energy: 0, mineral: 0, biomass: 0 },
+    resources: { energy: 3, mineral: 3, biomass: 3 },
     workers: { energyWorker: 1, mineralWorker: 1, biomassWorker: 1 },
     deckConfig: {},
     drawPile: [],
@@ -332,6 +386,7 @@ const deckWrap = document.getElementById('deckWrap');
 const deckPlayerNum = document.getElementById('deckPlayerNum');
 const deckTotal = document.getElementById('deckTotal');
 const deckCategories = document.getElementById('deckCategories');
+const standardDeckBtn = document.getElementById('standardDeckBtn');
 const autoFillBtn = document.getElementById('autoFillBtn');
 const resetDeckBtn = document.getElementById('resetDeckBtn');
 const confirmDeckBtn = document.getElementById('confirmDeckBtn');
@@ -367,12 +422,18 @@ startBuildBtn.addEventListener('click', () => {
   openDeckBuilder(0);
 });
 
+function applyStandardDeck(playerIdx) {
+  const config = {};
+  CARDS.forEach(c => { config[c.id] = 1; }); // one of each = 50 cards, equally balanced across all categories
+  players[playerIdx].deckConfig = config;
+}
+
 function openDeckBuilder(playerIdx) {
   buildingDeckFor = playerIdx;
   deckWrap.classList.remove('hidden');
   deckPlayerNum.textContent = playerIdx + 1;
   if (Object.keys(players[playerIdx].deckConfig).length === 0) {
-    CARDS.forEach(c => { players[playerIdx].deckConfig[c.id] = 0; });
+    applyStandardDeck(playerIdx);
   }
   renderDeckBuilder();
 }
@@ -428,6 +489,11 @@ function updateDeckTotal() {
   deckTotal.classList.toggle('ready', total === DECK_SIZE);
   confirmDeckBtn.disabled = total !== DECK_SIZE;
 }
+
+standardDeckBtn.addEventListener('click', () => {
+  applyStandardDeck(buildingDeckFor);
+  renderDeckBuilder();
+});
 
 autoFillBtn.addEventListener('click', () => {
   const config = players[buildingDeckFor].deckConfig;
@@ -517,8 +583,10 @@ function renderGame() {
     const card = cardById(cardId);
     const canAfford = affordable(card, self);
     const el = document.createElement('div');
-    el.className = 'hand-card' + (canAfford ? '' : ' unaffordable');
+    el.className = `hand-card cat-${card.cat}` + (canAfford ? '' : ' unaffordable');
+    el.style.animationDelay = (handIdx * 0.04) + 's';
     el.innerHTML = `
+      <div class="hc-icon">${RESOURCE_ICON[card.cat]}</div>
       <div class="hc-name">${card.name}</div>
       <div class="hc-cost ${card.cost.r}">${card.cost.a} ${RESOURCE_ICON[card.cost.r]} ${RESOURCE_NAME[card.cost.r]}</div>
       <div class="hc-desc">${card.desc}</div>
@@ -531,18 +599,40 @@ function renderGame() {
   logPanel.scrollTop = logPanel.scrollHeight;
 }
 
+function workerBadge(icon, count) {
+  const dotCount = Math.min(count, 8);
+  const dots = Array(dotCount).fill('<span class="w-dot"></span>').join('');
+  const extra = count > 8 ? `<span style="font-size:9px;color:var(--gold-bright);font-weight:800;">+${count - 8}</span>` : '';
+  return `<div class="worker-badge"><span class="w-icon">${icon}</span><div class="w-dots">${dots}${extra}</div><span class="w-count">${count}</span></div>`;
+}
+
 function renderStatBlock(p) {
   const shieldPct = Math.min(100, (p.shield / 50) * 100);
   const basePct = Math.min(100, (p.base / WIN_BASE) * 100);
+  const baseScale = (0.62 + 0.6 * Math.min(1, p.base / WIN_BASE)).toFixed(2);
+  const domeSize = Math.round(58 + Math.min(1, p.shield / 40) * 40);
+  const domeOpacity = p.shield > 0 ? Math.min(1, 0.4 + p.shield / 40) : 0;
+
   return `
     <div class="stat-name">${p.name}</div>
+    <div class="base-visual">
+      <div class="shield-dome" style="width:${domeSize}px; height:${domeSize}px; opacity:${domeOpacity};"></div>
+      <div class="base-tower" style="transform: scale(${baseScale});">
+        <div class="tower-segment" style="width:44px; height:22px;"></div>
+        <div class="tower-segment" style="width:32px; height:18px;"></div>
+        <div class="tower-segment" style="width:22px; height:14px;"></div>
+        <div class="tower-core"></div>
+      </div>
+    </div>
     <div class="stat-hp-row"><span>🛸 ${p.base}/${WIN_BASE}</span><div class="hp-bar-track"><div class="hp-bar-fill" style="width:${basePct}%"></div></div></div>
     <div class="stat-hp-row"><span>🛡️ ${p.shield}</span><div class="hp-bar-track"><div class="shield-bar-fill" style="width:${shieldPct}%"></div></div></div>
     <div class="stat-resources">
-      <span>⚡${p.resources.energy}</span><span>💎${p.resources.mineral}</span><span>🧬${p.resources.biomass}</span>
+      <span>⚡ ${p.resources.energy}</span><span>💎 ${p.resources.mineral}</span><span>🧬 ${p.resources.biomass}</span>
     </div>
-    <div class="stat-resources">
-      <span>🔧${p.workers.energyWorker}</span><span>⛏️${p.workers.mineralWorker}</span><span>🔭${p.workers.biomassWorker}</span>
+    <div class="worker-row">
+      ${workerBadge('🔧', p.workers.energyWorker)}
+      ${workerBadge('⛏️', p.workers.mineralWorker)}
+      ${workerBadge('🔭', p.workers.biomassWorker)}
     </div>
   `;
 }
